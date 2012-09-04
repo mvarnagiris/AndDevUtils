@@ -30,6 +30,19 @@ public abstract class WorkEvent
 		return "Request type: " + requestType + ", Status: " + status + ", errorMessage: " + errorMessage;
 	}
 
+	// Public methods
+	// -----------------------------------------------------------------------------------------------------------------------------------
+
+	public boolean isStarted()
+	{
+		return status == STATUS_PENDING;
+	}
+
+	public boolean isFinished()
+	{
+		return status == STATUS_SUCCEEDED || status == STATUS_NOT_EXECUTED || status == STATUS_FAILED;
+	}
+
 	// Static methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
