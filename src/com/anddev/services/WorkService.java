@@ -116,6 +116,7 @@ public abstract class WorkService extends IntentService
 
 			// Send "failed" broadcast
 			workEvent.status = WorkEvent.STATUS_FAILED;
+			workEvent.errorMessage = e.getMessage();
 			onWorkFailed(intent, requestType, workEvent, e);
 			workEventBus.postWork(workEvent);
 		}
