@@ -24,6 +24,12 @@ public abstract class WorkEvent
 		return generateEventId(getClass(), requestType);
 	}
 
+	@Override
+	public String toString()
+	{
+		return "Request type: " + requestType + ", Status: " + status + ", errorMessage: " + errorMessage;
+	}
+
 	// Static methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
