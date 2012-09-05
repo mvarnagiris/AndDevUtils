@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.anddev.events.WorkEvent;
+import com.anddev.events.WorkEventBus;
 import com.anddev.services.WorkService;
 
 /**
@@ -12,7 +13,9 @@ import com.anddev.services.WorkService;
  */
 public abstract class WorkActivity extends SherlockFragmentActivity
 {
-	protected int	workingCount	= 0;
+	protected final WorkEventBus	workEventBus	= WorkEventBus.getDefault();
+	protected int					workingCount	= 0;
+	protected WorkEvent[]			progressEvents;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -20,6 +23,43 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		// Request feature for progress bar
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+
+		// Get progress events
+		progressEvents = getProgressEvents();
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+
+		// Register progress work events and update progress
+		if (progressEvents != null)
+		{
+			for (WorkEvent workEvent : progressEvents)
+			{
+				workEventBus.registerForMainThread(this, workEvent.getClass());
+				if (workEventBus.isWorking(workEvent.getEventId()))
+					onWorkStarted();
+			}
+		}
+	}
+
+	@Override
+	protected void onPause()
+	{
+		// Unregister progress work events
+		if (progressEvents != null)
+		{
+			for (WorkEvent workEvent : progressEvents)
+			{
+				workEventBus.unregister(this, workEvent.getClass());
+				if (workEventBus.isWorking(workEvent.getEventId()))
+					onWorkFinished();
+			}
+		}
+
+		super.onPause();
 	}
 
 	// Protected methods
@@ -56,4 +96,18 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		else if (event.isFinished())
 			onWorkFinished();
 	}
+
+	// Abstract methods
+	// -----------------------------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * Create and return an array of work events. This array will be used to mark events that you want to show progress for.
+	 * <p>
+	 * <b>Important:</b> All instances must have proper {@link WorkEvent#requestType} value. Also you <b>MUST</b> implement {@code onEvent(WorkEvent)} method
+	 * for each work event class.
+	 * </p>
+	 * 
+	 * @return Array of {@link WorkEvent} instances.
+	 */
+	protected abstract WorkEvent[] getProgressEvents();
 }
