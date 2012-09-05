@@ -103,8 +103,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	/**
 	 * Create and return an array of work events. This array will be used to mark events that you want to show progress for.
 	 * <p>
-	 * <b>Important:</b> All instances must have proper {@link WorkEvent#requestType} value. Also you <b>MUST</b> implement {@code onEvent(WorkEvent)} method
-	 * for each work event class.
+	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class.
 	 * </p>
 	 * 
 	 * @return Array of {@link WorkEvent} instances.

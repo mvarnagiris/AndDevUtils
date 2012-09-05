@@ -15,24 +15,12 @@ public abstract class WorkEvent
 	public static final int	STATUS_FAILED		= 4;
 	public static final int	STATUS_NOT_EXECUTED	= 5;
 
-	public int				requestType			= WorkService.RT_DEFAULT;
 	public int				status				= -1;
 	public String			errorMessage		= null;
 
-	public WorkEvent(int requestType)
-	{
-		this.requestType = requestType;
-	}
-
 	public String getEventId()
 	{
-		return generateEventId(getClass(), requestType);
-	}
-
-	@Override
-	public String toString()
-	{
-		return "Request type: " + requestType + ", Status: " + status + ", errorMessage: " + errorMessage;
+		return generateEventId(getClass());
 	}
 
 	// Public methods
@@ -51,8 +39,8 @@ public abstract class WorkEvent
 	// Static methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
-	public static String generateEventId(Class<?> cls, int requestType)
+	public static String generateEventId(Class<?> cls)
 	{
-		return cls.getName() + "_" + requestType;
+		return cls.getName();
 	}
 }
