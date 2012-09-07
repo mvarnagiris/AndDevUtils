@@ -97,9 +97,6 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			onWorkFinished();
 	}
 
-	// Abstract methods
-	// -----------------------------------------------------------------------------------------------------------------------------------
-
 	/**
 	 * Create and return an array of work events. This array will be used to mark events that you want to show progress for.
 	 * <p>
@@ -108,5 +105,8 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 * 
 	 * @return Array of {@link WorkEvent} instances.
 	 */
-	protected abstract WorkEvent[] getProgressEvents();
+	protected WorkEvent[] getProgressEvents()
+	{
+		return null;
+	}
 }
