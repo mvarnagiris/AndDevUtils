@@ -36,6 +36,11 @@ public abstract class WorkEvent
 		return status == STATUS_SUCCEEDED || status == STATUS_NOT_EXECUTED || status == STATUS_FAILED;
 	}
 
+	public boolean isSucceeded()
+	{
+		return status == STATUS_SUCCEEDED;
+	}
+
 	// Static methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
