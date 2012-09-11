@@ -7,31 +7,36 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.anddev.events.DialogEvent;
 
-import de.greenrobot.event.EventBus;
-
 /**
- * Simple dialog. To get events from this dialog, use {@link EventBus} and register to {@link SimpleDialogEvent}.
+ * Dialog that shows {@link EditText} as it's custom view.
  * 
  * @author Mantas Varnagiris
  */
-public class SimpleDialog extends SherlockDialogFragment
+public class EditTextDialog extends SimpleDialog
 {
-	protected final EventBus	eventBus		= EventBus.getDefault();
-	protected int				requestCode		= -1;
-	protected String			title			= null;
-	protected String			message			= null;
-	protected String			positiveButton	= null;
-	protected String			neutralButton	= null;
-	protected String			negativeButton	= null;
-	protected View				customView		= null;
+	private EditText	edit_ET;
+	private String		text;
+
+	// SimpleDialog
+	// --------------------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState)
 	{
+		// Fix EditText if necessary
+		if (edit_ET == null)
+		{
+			edit_ET = new EditText(getActivity());
+			customView = edit_ET;
+		}
+		edit_ET.setText(text);
+		edit_ET.setSelection(text.length());
+
+		// Create dialog
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
 		if (!TextUtils.isEmpty(title))
@@ -46,7 +51,7 @@ public class SimpleDialog extends SherlockDialogFragment
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					eventBus.post(new SimpleDialogEvent(requestCode, Dialog.BUTTON_POSITIVE));
+					eventBus.post(new EditTextDialogEvent(requestCode, Dialog.BUTTON_POSITIVE, edit_ET.getText().toString()));
 				}
 			});
 
@@ -56,7 +61,7 @@ public class SimpleDialog extends SherlockDialogFragment
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					eventBus.post(new SimpleDialogEvent(requestCode, Dialog.BUTTON_NEUTRAL));
+					eventBus.post(new EditTextDialogEvent(requestCode, Dialog.BUTTON_NEUTRAL, edit_ET.getText().toString()));
 				}
 			});
 
@@ -66,7 +71,7 @@ public class SimpleDialog extends SherlockDialogFragment
 				@Override
 				public void onClick(DialogInterface dialog, int which)
 				{
-					eventBus.post(new SimpleDialogEvent(requestCode, Dialog.BUTTON_NEGATIVE));
+					eventBus.post(new EditTextDialogEvent(requestCode, Dialog.BUTTON_NEGATIVE, edit_ET.getText().toString()));
 				}
 			});
 
@@ -76,84 +81,49 @@ public class SimpleDialog extends SherlockDialogFragment
 		return builder.create();
 	}
 
+	/**
+	 * This method does nothing. Use {@link EditTextDialog#setEditTextView(View, int)} instead.
+	 */
+	@Override
+	public void setCustomView(View customView)
+	{
+		// Do nothing.
+	}
+
 	// Public methods
 	// --------------------------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * Set request code for dialog.
+	 * Set custom view for dialog.
 	 * 
-	 * @param requestCode
-	 *            Request code for dialog.
+	 * @param editTextView
+	 *            If {@code null} then simple {@link EditText} will be created. Can be instance of {@link EditText}, then {@code editTextId} will be ignored.
+	 * @param editTextId
+	 *            Id for {@link EditText} in given view. Will be ignored if {@code editTextView} is instance of {@link EditText}.
 	 */
-	public void setRequestCode(int requestCode)
+	public void setEditTextView(View editTextView, int editTextId)
 	{
-		this.requestCode = requestCode;
+		if (editTextView != null && editTextView instanceof EditText)
+		{
+			edit_ET = (EditText) editTextView;
+			customView = edit_ET;
+		}
+		else if (editTextView != null && editTextId > 0)
+		{
+			edit_ET = (EditText) editTextView.findViewById(editTextId);
+			customView = editTextView;
+		}
 	}
 
 	/**
-	 * Set title for dialog.
+	 * Set default text for {@link EditText}.
 	 * 
-	 * @param title
-	 *            Dialog title.
+	 * @param text
+	 *            Default text.
 	 */
-	public void setTitle(String title)
+	public void setText(String text)
 	{
-		this.title = title;
-	}
-
-	/**
-	 * Set message for dialog.
-	 * 
-	 * @param message
-	 *            Dialog message.
-	 */
-	public void setMessage(String message)
-	{
-		this.message = message;
-	}
-
-	/**
-	 * Set positive button title for dialog.
-	 * 
-	 * @param positiveButton
-	 *            Dialog positive button title.
-	 */
-	public void setPositiveButton(String positiveButton)
-	{
-		this.positiveButton = positiveButton;
-	}
-
-	/**
-	 * Set neutral button title for dialog.
-	 * 
-	 * @param neutralButton
-	 *            Dialog neutral button title.
-	 */
-	public void setNeutralButton(String neutralButton)
-	{
-		this.neutralButton = neutralButton;
-	}
-
-	/**
-	 * Set negative button title for dialog.
-	 * 
-	 * @param negativeButton
-	 *            Dialog negative button title.
-	 */
-	public void setNegativeButton(String negativeButton)
-	{
-		this.negativeButton = negativeButton;
-	}
-
-	/**
-	 * Set custom view for dialog
-	 * 
-	 * @param customView
-	 *            Custom view for dialog.
-	 */
-	public void setCustomView(View customView)
-	{
-		this.customView = customView;
+		this.text = text;
 	}
 
 	// Builder
@@ -168,6 +138,8 @@ public class SimpleDialog extends SherlockDialogFragment
 		protected String	neutralButton	= null;
 		protected String	negativeButton	= null;
 		protected View		customView		= null;
+		protected String	text			= null;
+		protected int		editTextId		= 0;
 
 		public Builder(int requestCode)
 		{
@@ -178,13 +150,13 @@ public class SimpleDialog extends SherlockDialogFragment
 		// --------------------------------------------------------------------------------------------------------------------------------
 
 		/**
-		 * Creates new {@link SimpleDialog} with arguments provided for this builder.
+		 * Creates new {@link EditTextDialog} with arguments provided for this builder.
 		 * 
 		 * @return
 		 */
-		public SimpleDialog create()
+		public EditTextDialog create()
 		{
-			SimpleDialog f = new SimpleDialog();
+			EditTextDialog f = new EditTextDialog();
 
 			f.setRequestCode(requestCode);
 			f.setTitle(title);
@@ -192,7 +164,8 @@ public class SimpleDialog extends SherlockDialogFragment
 			f.setPositiveButton(positiveButton);
 			f.setNeutralButton(neutralButton);
 			f.setNegativeButton(negativeButton);
-			f.setCustomView(customView);
+			f.setEditTextView(customView, editTextId);
+			f.setText(text);
 
 			return f;
 		}
@@ -269,9 +242,23 @@ public class SimpleDialog extends SherlockDialogFragment
 		 *            Custom view argument for this builder.
 		 * @return Same builder for chaining.
 		 */
-		public Builder setCustomView(View customView)
+		public Builder setEditTextView(View editTextView, int editTextId)
 		{
-			this.customView = customView;
+			this.customView = editTextView;
+			this.editTextId = editTextId;
+			return this;
+		}
+
+		/**
+		 * Set default text argument for this builder.
+		 * 
+		 * @param text
+		 *            Default text.
+		 * @return Same builder for chaining.
+		 */
+		public Builder setText(String text)
+		{
+			this.text = text;
 			return this;
 		}
 	}
@@ -279,11 +266,22 @@ public class SimpleDialog extends SherlockDialogFragment
 	// Events
 	// --------------------------------------------------------------------------------------------------------------------------------
 
-	public static class SimpleDialogEvent extends DialogEvent
+	public static class EditTextDialogEvent extends DialogEvent
 	{
-		public SimpleDialogEvent(int requestCode, int buttonId)
+		public final String	text;
+
+		public EditTextDialogEvent(int requestCode, int buttonId, String text)
 		{
 			super(requestCode, buttonId);
+			this.text = text;
+		}
+
+		// Public methods
+		// --------------------------------------------------------------------------------------------------------------------------------
+
+		public String getText()
+		{
+			return text;
 		}
 	}
 }
