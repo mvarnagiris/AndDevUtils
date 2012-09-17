@@ -1,6 +1,7 @@
 package com.anddev.parsers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -75,6 +76,11 @@ public abstract class Parser
 	// ParsedValues
 	// --------------------------------------------------------------------------------------------------------------------------
 
+	/**
+	 * Object that contains parsed {@link ContentValues} arrays and single objects.
+	 * 
+	 * @author Mantas Varnagiris
+	 */
 	public static class ParsedValues
 	{
 		public final Map<String, ContentValues>		parsedObjectsMap;
@@ -97,6 +103,19 @@ public abstract class Parser
 		public void putArray(String key, ContentValues[] valuesArray)
 		{
 			parsedArraysMap.put(key, valuesArray);
+		}
+
+		/**
+		 * Converts list to array and calls {@link ParsedValues#putArray(String, ContentValues[])}.
+		 * 
+		 * @param key
+		 * @param valuesList
+		 */
+		public void putList(String key, List<ContentValues> valuesList)
+		{
+			ContentValues[] valuesArray = new ContentValues[valuesList.size()];
+			valuesList.toArray(valuesArray);
+			putArray(key, valuesArray);
 		}
 
 		public ContentValues getObject(String key)
