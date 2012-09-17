@@ -3,7 +3,6 @@ package com.anddev.services;
 import android.content.Intent;
 import android.database.Cursor;
 
-import com.anddev.db.SyncTable;
 import com.anddev.utils.NetworkUtils;
 
 /**
