@@ -77,7 +77,7 @@ public abstract class WorkService extends IntentService
 
 			// Send "not executed" event
 			workEvent.status = WorkEvent.STATUS_NOT_EXECUTED;
-			onWorkNotExecuted(intent, requestType, workEvent);
+			onWorkNotExecuted(intent, requestType, workEvent, startTime);
 			workEventBus.postWork(workEvent);
 
 			return;
@@ -88,7 +88,7 @@ public abstract class WorkService extends IntentService
 
 		// Send "started" event
 		workEvent.status = WorkEvent.STATUS_STARTED;
-		onWorkStarted(intent, requestType, workEvent);
+		onWorkStarted(intent, requestType, workEvent, startTime);
 		workEventBus.postWork(workEvent);
 
 		try
@@ -105,7 +105,7 @@ public abstract class WorkService extends IntentService
 
 			// Send "succeeded" event
 			workEvent.status = WorkEvent.STATUS_SUCCEEDED;
-			onWorkSucceeded(intent, requestType, workEvent);
+			onWorkSucceeded(intent, requestType, workEvent, startTime);
 			workEventBus.postWork(workEvent);
 		}
 		catch (Exception e)
@@ -115,7 +115,7 @@ public abstract class WorkService extends IntentService
 			// Send "failed" broadcast
 			workEvent.status = WorkEvent.STATUS_FAILED;
 			workEvent.errorMessage = e.getMessage();
-			onWorkFailed(intent, requestType, workEvent, e);
+			onWorkFailed(intent, requestType, workEvent, startTime, e);
 			workEventBus.postWork(workEvent);
 		}
 	}
@@ -146,8 +146,10 @@ public abstract class WorkService extends IntentService
 	 *            Request type. For convenience
 	 * @param workEvent
 	 *            Work event to modify if necessary
+	 * @param startTime
+	 *            Time when service started handling this intent.
 	 */
-	protected void onWorkNotExecuted(Intent intent, int requestType, WorkEvent workEvent)
+	protected void onWorkNotExecuted(Intent intent, int requestType, WorkEvent workEvent, long startTime)
 	{
 	}
 
@@ -160,8 +162,10 @@ public abstract class WorkService extends IntentService
 	 *            Request type. For convenience
 	 * @param workEvent
 	 *            Work event to modify if necessary
+	 * @param startTime
+	 *            Time when service started handling this intent.
 	 */
-	protected void onWorkStarted(Intent intent, int requestType, WorkEvent workEvent)
+	protected void onWorkStarted(Intent intent, int requestType, WorkEvent workEvent, long startTime)
 	{
 	}
 
@@ -174,10 +178,12 @@ public abstract class WorkService extends IntentService
 	 *            Request type. For convenience
 	 * @param workEvent
 	 *            Work event to modify if necessary
+	 * @param startTime
+	 *            Time when service started handling this intent.
 	 * @param e
-	 *            Exception. For convienence.
+	 *            Exception. For convenience.
 	 */
-	protected void onWorkFailed(Intent intent, int requestType, WorkEvent workEvent, Exception e)
+	protected void onWorkFailed(Intent intent, int requestType, WorkEvent workEvent, long startTime, Exception e)
 	{
 	}
 
@@ -190,8 +196,10 @@ public abstract class WorkService extends IntentService
 	 *            Request type. For convenience
 	 * @param workEvent
 	 *            Work event to modify if necessary
+	 * @param startTime
+	 *            Time when service started handling this intent.
 	 */
-	protected void onWorkSucceeded(Intent intent, int requestType, WorkEvent workEvent)
+	protected void onWorkSucceeded(Intent intent, int requestType, WorkEvent workEvent, long startTime)
 	{
 	}
 
