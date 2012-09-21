@@ -22,6 +22,9 @@ public class ImageParams
 	/** Image will be modified by given processor. Default is based on passed in {@link ScaleType}. */
 	public final ImageProcessor	imageProcessor;
 
+	/** Default scale type that was set in constructor. */
+	public final ScaleType		scaleType;
+
 	/** If {@code true}, bitmap will be set automatically. If {@code false}, use {@link ImageLoaderListener} to set images yourself. Default {@code true}. */
 	public boolean				setImagesAutomatically;
 
@@ -41,6 +44,7 @@ public class ImageParams
 	{
 		this.width = width;
 		this.height = height;
+		this.scaleType = scaleType;
 		ImageProcessor tempImageProcessor = null;
 		if (scaleType != null && scaleType != ScaleType.NONE && width > 0 && height > 0)
 			tempImageProcessor = new ScaleImageProcessor(width, height, scaleType);
