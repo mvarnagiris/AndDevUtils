@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 
@@ -13,7 +13,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
-public class TabsAdapter extends FragmentStatePagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener
+public class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener
 {
 	private final Context				context;
 	private final ActionBar				actionBar;
@@ -75,7 +75,7 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements ActionBar.
 	@Override
 	public void onPageSelected(int position)
 	{
-		actionBar.setSelectedNavigationItem(position);
+		actionBar.getTabAt(position).select();
 	}
 
 	@Override
@@ -89,14 +89,8 @@ public class TabsAdapter extends FragmentStatePagerAdapter implements ActionBar.
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft)
 	{
-		Object tag = tab.getTag();
-		for (int i = 0; i < tabs.size(); i++)
-		{
-			if (tabs.get(i) == tag)
-			{
-				viewPager.setCurrentItem(i);
-			}
-		}
+		if (viewPager.getCurrentItem() != tab.getPosition())
+			viewPager.setCurrentItem(tab.getPosition());
 	}
 
 	@Override
