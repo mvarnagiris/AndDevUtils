@@ -45,6 +45,7 @@ public abstract class WorkService extends IntentService
 
 		// Send "pending" event
 		final WorkEvent workEvent = getWorkEvent(requestType);
+		workEvent.requestType = requestType;
 		workEvent.status = WorkEvent.STATUS_PENDING;
 		onWorkPending(intent, requestType, workEvent);
 		workEventBus.postWork(workEvent);
@@ -61,6 +62,7 @@ public abstract class WorkService extends IntentService
 		final boolean force = intent.getBooleanExtra(EXTRA_FORCE, false);
 		final SharedPreferences prefs = PrefsUtils.getPrefs(getApplicationContext());
 		final WorkEvent workEvent = getWorkEvent(requestType);
+		workEvent.requestType = requestType;
 		final long lastSuccessfulWorkTime = prefs.getLong(PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(workEvent.getEventId()), 0);
 
 		try
@@ -98,7 +100,7 @@ public abstract class WorkService extends IntentService
 
 			// Store last refresh time
 			PrefsUtils.getPrefs(getApplicationContext()).edit()
-							.putLong(PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(workEvent.getEventId()), startTime).commit();
+					.putLong(PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(workEvent.getEventId()), startTime).commit();
 
 			if (BuildConfig.DEBUG)
 				Log.i(TAG, "Service succeeded. RT: " + requestType);

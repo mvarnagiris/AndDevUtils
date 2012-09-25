@@ -15,6 +15,7 @@ public abstract class WorkEvent
 	public static final int	STATUS_FAILED		= 4;
 	public static final int	STATUS_NOT_EXECUTED	= 5;
 
+	public int				requestType			= WorkService.RT_DEFAULT;
 	public int				status				= -1;
 	public String			errorMessage		= null;
 
