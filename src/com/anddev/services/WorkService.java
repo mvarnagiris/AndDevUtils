@@ -63,7 +63,9 @@ public abstract class WorkService extends IntentService
 		final SharedPreferences prefs = PrefsUtils.getPrefs(getApplicationContext());
 		final WorkEvent workEvent = getWorkEvent(requestType);
 		workEvent.requestType = requestType;
-		final long lastSuccessfulWorkTime = prefs.getLong(PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(workEvent.getEventId()), 0);
+		final String prefsKey = PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(getClass().getName(), requestType,
+				getPrefsSuffix(intent, requestType));
+		final long lastSuccessfulWorkTime = prefs.getLong(prefsKey, 0);
 
 		try
 		{
@@ -99,8 +101,7 @@ public abstract class WorkService extends IntentService
 			doWork(intent, requestType, startTime, lastSuccessfulWorkTime);
 
 			// Store last refresh time
-			PrefsUtils.getPrefs(getApplicationContext()).edit()
-					.putLong(PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(workEvent.getEventId()), startTime).commit();
+			PrefsUtils.getPrefs(getApplicationContext()).edit().putLong(prefsKey, startTime).commit();
 
 			if (BuildConfig.DEBUG)
 				Log.i(TAG, "Service succeeded. RT: " + requestType);
@@ -203,6 +204,23 @@ public abstract class WorkService extends IntentService
 	 */
 	protected void onWorkSucceeded(Intent intent, int requestType, WorkEvent workEvent, long startTime)
 	{
+	}
+
+	/**
+	 * Called when building key to get/store last successful work time.
+	 * <p>
+	 * Note: You don't need to include request type, because it's already included in the name.
+	 * </p>
+	 * 
+	 * @param intent
+	 *            Intent.
+	 * @param requestType
+	 *            Request type.
+	 * @return Suffix for preferences key. Can be {@code null}.
+	 */
+	protected String getPrefsSuffix(Intent intent, int requestType)
+	{
+		return "";
 	}
 
 	// Abstract methods

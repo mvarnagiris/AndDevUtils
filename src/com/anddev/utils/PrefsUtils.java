@@ -21,9 +21,9 @@ public class PrefsUtils
 		private static final String	PREFIX	= "work_service_";
 
 		/** Stores last successful sync date. */
-		public static final String getLastSuccessfulWorkTimePrefName(String eventId)
+		public static final String getLastSuccessfulWorkTimePrefName(String prefix, int requestType, String suffix)
 		{
-			return PREFIX + eventId;
+			return PREFIX + requestType + (suffix != null ? suffix : "");
 		}
 	}
 }
