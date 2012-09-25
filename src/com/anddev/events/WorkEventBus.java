@@ -7,7 +7,8 @@ import de.greenrobot.event.EventBus;
 
 public class WorkEventBus extends EventBus
 {
-	// Keeps track of currently working tasks
+	// Keeps track of currently working/pending tasks
+	protected final Map<String, Integer>	pendingTasks	= new HashMap<String, Integer>();
 	protected final Map<String, Integer>	workingTasks	= new HashMap<String, Integer>();
 
 	private static WorkEventBus				instance		= null;
@@ -28,10 +29,23 @@ public class WorkEventBus extends EventBus
 
 		if (workEvent.status == WorkEvent.STATUS_PENDING)
 		{
-			final Integer count = workingTasks.containsKey(eventId) ? workingTasks.get(eventId) + 1 : 1;
+			final Integer count = pendingTasks.containsKey(eventId) ? pendingTasks.get(eventId) + 1 : 1;
+			pendingTasks.put(eventId, count);
+		}
+		else if (workEvent.status == WorkEvent.STATUS_STARTED)
+		{
+			// Remove from pending tasks
+			Integer count = pendingTasks.get(eventId);
+			if (count == null || count == 1)
+				pendingTasks.remove(eventId);
+			else
+				pendingTasks.put(eventId, count - 1);
+
+			// Add to working tasks
+			count = workingTasks.containsKey(eventId) ? workingTasks.get(eventId) + 1 : 1;
 			workingTasks.put(eventId, count);
 		}
-		else if (workEvent.status != WorkEvent.STATUS_STARTED)
+		else
 		{
 			final Integer count = workingTasks.get(eventId);
 			if (count == null || count == 1)
@@ -43,8 +57,10 @@ public class WorkEventBus extends EventBus
 		post(workEvent);
 	}
 
-	public boolean isWorking(String eventId)
+	public boolean isWorking(String eventId, boolean workingOnPenging)
 	{
+		if (workingOnPenging)
+			return pendingTasks.containsKey(eventId) || workingTasks.containsKey(eventId);
 		return workingTasks.containsKey(eventId);
 	}
 }

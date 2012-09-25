@@ -15,7 +15,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 {
 	protected final WorkEventBus	workEventBus	= WorkEventBus.getDefault();
 	protected int					workingCount	= 0;
-	protected WorkEvent[]			progressEvents;
+	protected EventToTrack[]		eventsToTrack;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -23,9 +23,15 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		// Request feature for progress bar
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState)
+	{
+		super.onPostCreate(savedInstanceState);
 
 		// Get progress events
-		progressEvents = getProgressEvents();
+		eventsToTrack = getEventsToTrack();
 	}
 
 	@Override
@@ -34,12 +40,12 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		super.onResume();
 
 		// Register progress work events and update progress
-		if (progressEvents != null)
+		if (eventsToTrack != null)
 		{
-			for (WorkEvent workEvent : progressEvents)
+			for (EventToTrack eventToTrack : eventsToTrack)
 			{
-				workEventBus.registerForMainThread(this, workEvent.getClass());
-				if (workEventBus.isWorking(workEvent.getEventId()))
+				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
+				if (eventToTrack.showProgress && workEventBus.isWorking(eventToTrack.event.getEventId(), eventToTrack.workingOnPending))
 					onWorkStarted();
 			}
 		}
@@ -49,15 +55,16 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	protected void onPause()
 	{
 		// Unregister progress work events
-		if (progressEvents != null)
+		if (eventsToTrack != null)
 		{
-			for (WorkEvent workEvent : progressEvents)
+			for (EventToTrack eventToTrack : eventsToTrack)
 			{
-				workEventBus.unregister(this, workEvent.getClass());
-				if (workEventBus.isWorking(workEvent.getEventId()))
-					onWorkFinished();
+				workEventBus.unregister(this, eventToTrack.event.getClass());
 			}
 		}
+
+		// Reset working count
+		workingCount = 0;
 
 		super.onPause();
 	}
@@ -102,15 +109,33 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	}
 
 	/**
-	 * Create and return an array of work events. This array will be used to mark events that you want to show progress for.
+	 * Create and return an array of work events to track. This array will be used to register for events that you want to track.
 	 * <p>
-	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class.
+	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class. You also need to make sure to call
+	 * {@link WorkActivity#onWorkEvent(WorkEvent, boolean)} in {@code onEvent(WorkEvent)} for events you want to show progress.
 	 * </p>
 	 * 
 	 * @return Array of {@link WorkEvent} instances.
 	 */
-	protected WorkEvent[] getProgressEvents()
+	protected EventToTrack[] getEventsToTrack()
 	{
 		return null;
+	}
+
+	// EventToTrack
+	// -----------------------------------------------------------------------------------------------------------------------------------
+
+	public static class EventToTrack
+	{
+		public final WorkEvent	event;
+		public final boolean	workingOnPending;
+		public final boolean	showProgress;
+
+		public EventToTrack(WorkEvent event, boolean startsOnPending, boolean showProgress)
+		{
+			this.event = event;
+			this.workingOnPending = startsOnPending;
+			this.showProgress = showProgress;
+		}
 	}
 }
