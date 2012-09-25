@@ -112,7 +112,8 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 * Create and return an array of work events to track. This array will be used to register for events that you want to track.
 	 * <p>
 	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class. You also need to make sure to call
-	 * {@link WorkActivity#onWorkEvent(WorkEvent, boolean)} in {@code onEvent(WorkEvent)} for events you want to show progress.
+	 * {@link WorkActivity#onWorkEvent(WorkEvent, boolean)} in {@code onEvent(WorkEvent)} for events that will have {@link EventToTrack#showProgress} set to
+	 * {@code true}.
 	 * </p>
 	 * 
 	 * @return Array of {@link WorkEvent} instances.
