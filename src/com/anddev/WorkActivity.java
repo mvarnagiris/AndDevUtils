@@ -88,10 +88,14 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 * 
 	 * @param event
 	 *            Event from {@link WorkService}.
+	 * @param startOnPending
+	 *            If {@code true}, event start will be counted on "pending" event.
 	 */
-	protected void onWorkEvent(WorkEvent event)
+	protected void onWorkEvent(WorkEvent event, boolean startOnPending)
 	{
-		if (event.isStarted())
+		if (startOnPending && event.isPending())
+			onWorkStarted();
+		else if (!startOnPending && event.isStarted())
 			onWorkStarted();
 		else if (event.isFinished())
 			onWorkFinished();
