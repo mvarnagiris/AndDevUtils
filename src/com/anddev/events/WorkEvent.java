@@ -27,9 +27,14 @@ public abstract class WorkEvent
 	// Public methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
-	public boolean isStarted()
+	public boolean isPending()
 	{
 		return status == STATUS_PENDING;
+	}
+
+	public boolean isStarted()
+	{
+		return status == STATUS_STARTED;
 	}
 
 	public boolean isFinished()
