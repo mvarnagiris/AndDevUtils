@@ -26,13 +26,14 @@ public class WorkEventBus extends EventBus
 	public void postWork(WorkEvent workEvent)
 	{
 		final String eventId = workEvent.getEventId();
+		final int status = workEvent.status;
 
-		if (workEvent.status == WorkEvent.STATUS_PENDING)
+		if (status == WorkEvent.STATUS_PENDING)
 		{
 			final Integer count = pendingTasks.containsKey(eventId) ? pendingTasks.get(eventId) + 1 : 1;
 			pendingTasks.put(eventId, count);
 		}
-		else if (workEvent.status == WorkEvent.STATUS_STARTED)
+		else if (status == WorkEvent.STATUS_STARTED)
 		{
 			// Remove from pending tasks
 			Integer count = pendingTasks.get(eventId);
@@ -57,10 +58,19 @@ public class WorkEventBus extends EventBus
 		post(workEvent);
 	}
 
-	public boolean isWorking(String eventId, boolean workingOnPenging)
+	public boolean isWorking(String eventId, boolean workingOnPending)
 	{
-		if (workingOnPenging)
-			return pendingTasks.containsKey(eventId) || workingTasks.containsKey(eventId);
-		return workingTasks.containsKey(eventId);
+		// Check pending tasks if necessary
+		if (workingOnPending)
+			for (String key : pendingTasks.keySet())
+				if (key.startsWith(eventId))
+					return true;
+
+		// Check working tasks
+		for (String key : workingTasks.keySet())
+			if (key.startsWith(eventId))
+				return true;
+
+		return false;
 	}
 }

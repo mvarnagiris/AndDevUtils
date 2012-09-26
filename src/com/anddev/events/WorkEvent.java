@@ -32,9 +32,9 @@ public abstract class WorkEvent
 	 * 
 	 * @return Unique event Id.
 	 */
-	public String getEventId()
+	public final String getEventId()
 	{
-		return getClass().getName() + "_" + requestType;
+		return WorkEvent.class.getName() + "_" + getEventIdPart();
 	}
 
 	/**
@@ -68,4 +68,13 @@ public abstract class WorkEvent
 	{
 		return status == STATUS_SUCCEEDED;
 	}
+
+	// Abstract methods
+	// -----------------------------------------------------------------------------------------------------------------------------------
+
+	/**
+	 * @return Suffix of event Id. When extending a class that already extends {@link WorkEvent}, make sure to include super class event Id part like that:
+	 *         {@code return super.getEventIdPart() + YourEvent.class.getName() + "_" + maybeSomeId;}, if you want to track super class event work progress.
+	 */
+	protected abstract String getEventIdPart();
 }

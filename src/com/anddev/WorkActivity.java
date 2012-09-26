@@ -15,7 +15,6 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 {
 	protected final WorkEventBus	workEventBus	= WorkEventBus.getDefault();
 	protected int					workingCount	= 0;
-	protected EventToTrack[]		eventsToTrack;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -26,20 +25,12 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	}
 
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState)
-	{
-		super.onPostCreate(savedInstanceState);
-
-		// Get progress events
-		eventsToTrack = getEventsToTrack();
-	}
-
-	@Override
 	protected void onResume()
 	{
 		super.onResume();
 
 		// Register progress work events and update progress
+		final EventToTrack[] eventsToTrack = getEventsToTrack();
 		if (eventsToTrack != null)
 		{
 			for (EventToTrack eventToTrack : eventsToTrack)
@@ -55,6 +46,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	protected void onPause()
 	{
 		// Unregister progress work events
+		final EventToTrack[] eventsToTrack = getEventsToTrack();
 		if (eventsToTrack != null)
 		{
 			for (EventToTrack eventToTrack : eventsToTrack)
