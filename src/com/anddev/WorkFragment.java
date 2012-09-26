@@ -52,4 +52,18 @@ public abstract class WorkFragment extends SherlockFragment
 	{
 		return null;
 	}
+
+	/**
+	 * Called from {@link WorkFragment#onResume()} methods when even is working
+	 * <p>
+	 * <b>Important:</b> {@link WorkEvent#requestType}, {@link WorkEvent#status}, {@link WorkEvent#errorMessage} will <b>not</b> be set in here so do not do
+	 * anything with them here.
+	 * </p>
+	 * 
+	 * @param event
+	 *            Event that is already working.
+	 */
+	protected void onEventWorking(WorkEvent event)
+	{
+	}
 }

@@ -37,7 +37,10 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			{
 				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
 				if (eventToTrack.showProgress && workEventBus.isWorking(eventToTrack.event.getEventId(), eventToTrack.workingOnPending))
+				{
 					onWorkStarted();
+					onEventWorking(eventToTrack.event);
+				}
 			}
 		}
 	}
@@ -98,6 +101,21 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			onWorkStarted();
 		else if (event.isFinished())
 			onWorkFinished();
+	}
+
+	/**
+	 * Called from {@link WorkActivity#onResume()} methods when even is working
+	 * <p>
+	 * <b>Important:</b> {@link WorkEvent#requestType}, {@link WorkEvent#status}, {@link WorkEvent#errorMessage} will <b>not</b> be set in here so do not do
+	 * anything with them here.
+	 * </p>
+	 * 
+	 * @param event
+	 *            Event that is already working.
+	 */
+	protected void onEventWorking(WorkEvent event)
+	{
+
 	}
 
 	/**
