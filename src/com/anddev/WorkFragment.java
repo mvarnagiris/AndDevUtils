@@ -1,6 +1,7 @@
 package com.anddev;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.anddev.WorkActivity.EventToTrack;
 import com.anddev.events.WorkEvent;
 import com.anddev.events.WorkEventBus;
 
@@ -19,11 +20,15 @@ public abstract class WorkFragment extends SherlockFragment
 		super.onResume();
 
 		// Register events
-		WorkEvent[] workEvents = getEventsToRegister();
-		if (workEvents != null)
+		EventToTrack[] eventsToTrack = getEventsToRegister();
+		if (eventsToTrack != null)
 		{
-			for (WorkEvent event : workEvents)
-				workEventBus.registerForMainThread(this, event.getClass());
+			for (EventToTrack eventToTrack : eventsToTrack)
+			{
+				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
+				if (workEventBus.isWorking(eventToTrack.event.getEventId(), eventToTrack.workingOnPending))
+					onEventWorking(eventToTrack.event);
+			}
 		}
 	}
 
@@ -31,11 +36,11 @@ public abstract class WorkFragment extends SherlockFragment
 	public void onPause()
 	{
 		// Unregister events
-		WorkEvent[] workEvents = getEventsToRegister();
-		if (workEvents != null)
+		EventToTrack[] eventsToTrack = getEventsToRegister();
+		if (eventsToTrack != null)
 		{
-			for (WorkEvent event : workEvents)
-				workEventBus.unregister(this, event.getClass());
+			for (EventToTrack eventToTrack : eventsToTrack)
+				workEventBus.unregister(this, eventToTrack.event.getClass());
 		}
 
 		super.onPause();
@@ -45,10 +50,10 @@ public abstract class WorkFragment extends SherlockFragment
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * @return An array of {@link WorkEvent} that will be registered in {@link WorkFragment#onResume()} and unregistered in {@link WorkFragment#onPause()}. You
-	 *         must make sure to implement {@code onEvent()} methods.
+	 * @return An array of {@link EventToTrack} that will be registered in {@link WorkFragment#onResume()} and unregistered in {@link WorkFragment#onPause()}.
+	 *         You must make sure to implement {@code onEvent()} methods. {@link EventToTrack#showProgress} field will be ignored.
 	 */
-	protected WorkEvent[] getEventsToRegister()
+	protected EventToTrack[] getEventsToRegister()
 	{
 		return null;
 	}
