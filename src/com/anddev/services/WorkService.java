@@ -61,8 +61,7 @@ public abstract class WorkService extends IntentService
 		final int requestType = intent.getIntExtra(EXTRA_REQUEST_TYPE, RT_DEFAULT);
 		final boolean force = intent.getBooleanExtra(EXTRA_FORCE, false);
 		final SharedPreferences prefs = PrefsUtils.getPrefs(getApplicationContext());
-		final WorkEvent workEvent = getWorkEvent(intent, requestType);
-		workEvent.requestType = requestType;
+		WorkEvent workEvent;
 		final String prefsKey = PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(getClass().getName(), requestType,
 				getPrefsSuffix(intent, requestType));
 		final long lastSuccessfulWorkTime = prefs.getLong(prefsKey, 0);
@@ -80,6 +79,8 @@ public abstract class WorkService extends IntentService
 				Log.i(TAG, "Service will not execute. RT: " + requestType + ". Reason: " + e.getMessage());
 
 			// Send "not executed" event
+			workEvent = getWorkEvent(intent, requestType);
+			workEvent.requestType = requestType;
 			workEvent.status = WorkEvent.STATUS_NOT_EXECUTED;
 			onWorkNotExecuted(intent, requestType, workEvent, startTime);
 			workEventBus.postWork(workEvent);
@@ -91,6 +92,8 @@ public abstract class WorkService extends IntentService
 			Log.i(TAG, "Service start. RT: " + requestType);
 
 		// Send "started" event
+		workEvent = getWorkEvent(intent, requestType);
+		workEvent.requestType = requestType;
 		workEvent.status = WorkEvent.STATUS_STARTED;
 		onWorkStarted(intent, requestType, workEvent, startTime);
 		workEventBus.postWork(workEvent);
@@ -107,6 +110,8 @@ public abstract class WorkService extends IntentService
 				Log.i(TAG, "Service succeeded. RT: " + requestType);
 
 			// Send "succeeded" event
+			workEvent = getWorkEvent(intent, requestType);
+			workEvent.requestType = requestType;
 			workEvent.status = WorkEvent.STATUS_SUCCEEDED;
 			onWorkSucceeded(intent, requestType, workEvent, startTime);
 			workEventBus.postWork(workEvent);
@@ -116,6 +121,8 @@ public abstract class WorkService extends IntentService
 			Log.e(TAG, "Service failed. RT: " + requestType, e);
 
 			// Send "failed" broadcast
+			workEvent = getWorkEvent(intent, requestType);
+			workEvent.requestType = requestType;
 			workEvent.status = WorkEvent.STATUS_FAILED;
 			workEvent.errorMessage = e.getMessage();
 			onWorkFailed(intent, requestType, workEvent, startTime, e);
