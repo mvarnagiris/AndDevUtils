@@ -48,11 +48,17 @@ public class WorkEventBus extends EventBus
 		}
 		else
 		{
-			final Integer count = workingTasks.get(eventId);
+			Integer count = workingTasks.get(eventId);
 			if (count == null || count == 1)
 				workingTasks.remove(eventId);
 			else
 				workingTasks.put(eventId, count - 1);
+
+			count = pendingTasks.get(eventId);
+			if (count == null || count == 1)
+				pendingTasks.remove(eventId);
+			else
+				pendingTasks.put(eventId, count - 1);
 		}
 
 		post(workEvent);
