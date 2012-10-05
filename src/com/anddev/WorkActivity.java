@@ -76,10 +76,10 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 * </p>
 	 * 
 	 * @param event
-	 *            Event. <b>Important: </b>If {@code isRealEvent} is {@code false}, then {@link WorkEvent#requestType}, {@link WorkEvent#status},
-	 *            {@link WorkEvent#errorMessage} will <b>not</b> be set in here so do not do anything with them here.
+	 *            Event. <b>Important: </b>If {@code isRealEvent} is {@code false}, then this will be the event you return from
+	 *            {@link WorkActivity#getEventsToTrack()}.
 	 * @param isRealEvent
-	 *            {@code true} means that this method was called from {@link WorkActivity#onResume()} and does not have all properties set.
+	 *            {@code true} means that this method was called from {@link WorkActivity#onResume()} and may not have all properties set.
 	 */
 	protected void onWorkStarted(WorkEvent event, boolean isRealEvent)
 	{
