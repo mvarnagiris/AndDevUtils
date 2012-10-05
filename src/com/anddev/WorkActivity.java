@@ -37,10 +37,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			{
 				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
 				if (eventToTrack.showProgress && workEventBus.isWorking(eventToTrack.event.getEventId(), eventToTrack.workingOnPending))
-				{
-					onWorkStarted();
-					onEventWorking(eventToTrack.event);
-				}
+					onWorkStarted(eventToTrack.event, false);
 			}
 		}
 	}
@@ -70,8 +67,21 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 
 	/**
 	 * Increases working tasks counter and makes progress bar visible.
+	 * <p>
+	 * You don't usually call this method directly. Use {@link WorkActivity#onWorkEvent(WorkEvent, boolean)}.
+	 * </p>
+	 * <p>
+	 * Can be called from {@link WorkActivity#onResume()} when restoring working tasks. If it's called from there, {@code isRealEvent} will be {@code false},
+	 * because it will not have all values set properly.
+	 * </p>
+	 * 
+	 * @param event
+	 *            Event. <b>Important: </b>If {@code isRealEvent} is {@code false}, then {@link WorkEvent#requestType}, {@link WorkEvent#status},
+	 *            {@link WorkEvent#errorMessage} will <b>not</b> be set in here so do not do anything with them here.
+	 * @param isRealEvent
+	 *            {@code true} means that this method was called from {@link WorkActivity#onResume()} and does not have all properties set.
 	 */
-	protected void onWorkStarted()
+	protected void onWorkStarted(WorkEvent event, boolean isRealEvent)
 	{
 		workingCount++;
 		setSupportProgressBarIndeterminateVisibility(true);
@@ -79,15 +89,26 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 
 	/**
 	 * Decreases working tasks counter and based on if there are more working tasks or not, changes progress bar visibility.
+	 * <p>
+	 * You don't usually call this method directly. Use {@link WorkActivity#onWorkEvent(WorkEvent, boolean)}.
+	 * </p>
+	 * 
+	 * @param event
+	 *            Event.
 	 */
-	protected void onWorkFinished()
+	protected void onWorkFinished(WorkEvent event)
 	{
 		workingCount--;
 		setSupportProgressBarIndeterminateVisibility(workingCount > 0);
 	}
 
 	/**
-	 * Checks {@link WorkEvent#status} and calls {@link WorkActivity#onWorkStarted()} or {@link WorkActivity#onWorkFinished()} or does nothing.
+	 * Checks {@link WorkEvent#status} and calls {@link WorkActivity#onWorkStarted(WorkEvent, boolean)} or {@link WorkActivity#onWorkFinished(WorkEvent)} or
+	 * does nothing.
+	 * <p>
+	 * <b>Important: </b>You need to make sure to call {@link WorkActivity#onWorkEvent(WorkEvent, boolean)} in {@code onEvent(WorkEvent)} for events that will
+	 * have {@link EventToTrack#showProgress} set to {@code true}.
+	 * </p>
 	 * 
 	 * @param event
 	 *            Event from {@link WorkService}.
@@ -97,26 +118,11 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	protected void onWorkEvent(WorkEvent event, boolean startOnPending)
 	{
 		if (startOnPending && event.isPending())
-			onWorkStarted();
+			onWorkStarted(event, true);
 		else if (!startOnPending && event.isStarted())
-			onWorkStarted();
+			onWorkStarted(event, true);
 		else if (event.isFinished())
-			onWorkFinished();
-	}
-
-	/**
-	 * Called from {@link WorkActivity#onResume()} methods when even is working
-	 * <p>
-	 * <b>Important:</b> {@link WorkEvent#requestType}, {@link WorkEvent#status}, {@link WorkEvent#errorMessage} will <b>not</b> be set in here so do not do
-	 * anything with them here.
-	 * </p>
-	 * 
-	 * @param event
-	 *            Event that is already working.
-	 */
-	protected void onEventWorking(WorkEvent event)
-	{
-
+			onWorkFinished(event);
 	}
 
 	/**
