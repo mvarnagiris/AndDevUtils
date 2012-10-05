@@ -60,6 +60,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 
 		// Reset working count
 		workingCount = 0;
+		setSupportProgressBarIndeterminateVisibility(false);
 
 		super.onPause();
 	}
