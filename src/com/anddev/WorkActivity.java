@@ -49,7 +49,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			eventToTrack = eventsToTrack.get(eventId);
 			workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
 			if (eventToTrack.showProgress && workEventBus.isWorking(eventId, eventToTrack.workingOnPending))
-				onWorkStarted(eventToTrack.event, eventToTrack.showProgress, false);
+				onWorkStarted(eventToTrack.event, eventToTrack.showProgress, true);
 		}
 	}
 
@@ -83,19 +83,19 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 * This method is not private, because it might be useful to override it to get updates about tasks - new events and restored events.
 	 * </p>
 	 * <p>
-	 * Can be called from {@link WorkActivity#onResume()} when restoring working tasks. If it's called from there, {@code isRealEvent} will be {@code false},
+	 * Can be called from {@link WorkActivity#onResume()} when restoring working tasks. If it's called from there, {@code isRestore} will be {@code true},
 	 * because it will not have all values set properly.
 	 * </p>
 	 * 
 	 * @param event
-	 *            Event. <b>Important: </b>If {@code isRealEvent} is {@code false}, then this will be the event you return from
-	 *            {@link WorkActivity#getEventsToTrack()}.
+	 *            Event. <b>Important: </b>If {@code isRestore} is {@code true}, then this will be the event you return from
+	 *            {@link WorkActivity#getEventsToTrack()}, so it might not have all properties set.
 	 * @param showProgress
 	 *            Flag that indicates if Activity should show progress bar for this event.
-	 * @param isRealEvent
+	 * @param isRestore
 	 *            {@code true} means that this method was called from {@link WorkActivity#onResume()} and may not have all properties set.
 	 */
-	protected void onWorkStarted(WorkEvent event, boolean showProgress, boolean isRealEvent)
+	protected void onWorkStarted(WorkEvent event, boolean showProgress, boolean isRestore)
 	{
 		if (showProgress)
 		{
@@ -152,9 +152,9 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		}
 
 		if (eventToTrack.workingOnPending && event.isPending())
-			onWorkStarted(event, eventToTrack.showProgress, true);
+			onWorkStarted(event, eventToTrack.showProgress, false);
 		else if (!eventToTrack.workingOnPending && event.isStarted())
-			onWorkStarted(event, eventToTrack.showProgress, true);
+			onWorkStarted(event, eventToTrack.showProgress, false);
 		else if (event.isFinished())
 			onWorkFinished(event, eventToTrack.showProgress);
 	}
