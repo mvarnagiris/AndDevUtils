@@ -71,6 +71,21 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
 	/**
+	 * Create and return an array of work events to track - get updates about status changes and restore events in {@link WorkActivity#onResume()}. This array
+	 * will be used to register for events that you want to track.
+	 * <p>
+	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class. You also need to make sure to call
+	 * {@link WorkActivity#onWorkEvent(WorkEvent)} in {@code onEvent(WorkEvent)} for all events.
+	 * </p>
+	 * 
+	 * @return Array of {@link EventToTrack} instances.
+	 */
+	protected EventToTrack[] getEventsToTrack()
+	{
+		return null;
+	}
+
+	/**
 	 * If {@code showProgress} is {@code true}, then increases working tasks counter and makes progress bar visible.
 	 * <p>
 	 * Don't call this method. Use {@link WorkActivity#onWorkEvent(WorkEvent)}.
@@ -128,10 +143,11 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	}
 
 	/**
-	 * Checks {@link WorkEvent#status} and calls {@link WorkActivity#onWorkStarted(WorkEvent, boolean)} or {@link WorkActivity#onWorkFinished(WorkEvent)} or
-	 * does nothing.
+	 * Checks {@link WorkEvent#status} and calls {@link WorkActivity#onWorkStarted(WorkEvent, boolean, boolean)} or
+	 * {@link WorkActivity#onWorkFinished(WorkEvent)} or does nothing.
 	 * <p>
-	 * <b>Important: </b>You need to make sure to call {@link WorkActivity#onWorkEvent(WorkEvent, boolean)} in {@code onEvent(WorkEvent)} for all events.
+	 * <b>Important: </b>You need to make sure to call {@link WorkActivity#onWorkEvent(WorkEvent, boolean, boolean)} in {@code onEvent(WorkEvent)} for all
+	 * events.
 	 * </p>
 	 * 
 	 * @param event
@@ -157,21 +173,6 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			onWorkStarted(event, eventToTrack.showProgress, true);
 		else if (event.isFinished())
 			onWorkFinished(event, eventToTrack.showProgress, true);
-	}
-
-	/**
-	 * Create and return an array of work events to track - get updates about status changes and restore events in {@link WorkActivity#onResume()}. This array
-	 * will be used to register for events that you want to track.
-	 * <p>
-	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class. You also need to make sure to call
-	 * {@link WorkActivity#onWorkEvent(WorkEvent)} in {@code onEvent(WorkEvent)} for all events.
-	 * </p>
-	 * 
-	 * @return Array of {@link WorkEvent} instances.
-	 */
-	protected EventToTrack[] getEventsToTrack()
-	{
-		return null;
 	}
 
 	// Private methods
