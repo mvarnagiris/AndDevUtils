@@ -139,16 +139,16 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 */
 	protected void onWorkEvent(WorkEvent event)
 	{
-		EventToTrack eventToTrack = eventsToTrack.get(event.getEventId());
+		final EventToTrack eventToTrack = eventsToTrack.get(event.getEventId());
 
 		// This should not happen if implemented correctly
 		if (eventToTrack == null)
 		{
 			if (BuildConfig.DEBUG)
 				Log.w(TAG,
-						"EventToTrack not found. Default created. You should not see this message - you must return this event in WorkActivity.getEventsToTrack() method: "
+						"EventToTrack not found. If you have events that have properties that change eventId, you should check for those properties before calling onWorkEvent(WorkEvent) method. "
 								+ event.toString());
-			eventToTrack = new EventToTrack(event, true, true);
+			return;
 		}
 
 		if (eventToTrack.workingOnPending && event.isPending())
