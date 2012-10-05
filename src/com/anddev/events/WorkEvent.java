@@ -19,6 +19,13 @@ public abstract class WorkEvent
 	public int				status				= -1;
 	public String			errorMessage		= null;
 
+	@Override
+	public String toString()
+	{
+		return getClass().getName() + ": [eventId = " + getEventId() + "] [requestType = " + requestType + "] [status = " + status + "] + [errorMessage = "
+				+ errorMessage + "]";
+	}
+
 	// Public methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
