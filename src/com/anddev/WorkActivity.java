@@ -29,6 +29,12 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		// Request feature for progress bar
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState)
+	{
+		super.onPostCreate(savedInstanceState);
 
 		// Init events to track
 		EventToTrack[] eventsToTrackArray = getEventsToTrack();
