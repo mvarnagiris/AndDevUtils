@@ -25,9 +25,9 @@ public abstract class WorkFragment extends SherlockFragment
 	private static final String					TAG				= "WorkFragment";
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onActivityCreated(savedInstanceState);
+		super.onCreate(savedInstanceState);
 
 		// Init events to track
 		EventToTrack[] eventsToTrackArray = getEventsToTrack();
