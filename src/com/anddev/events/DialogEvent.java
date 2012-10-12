@@ -21,6 +21,11 @@ public class DialogEvent
 	// Public methods
 	// --------------------------------------------------------------------------------------------------------------------------------
 
+	public int getRequestCode()
+	{
+		return requestCode;
+	}
+
 	public boolean isPositive()
 	{
 		return buttonId == Dialog.BUTTON_POSITIVE;
