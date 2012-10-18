@@ -23,7 +23,7 @@ public class PrefsUtils
 		/** Stores last successful sync date. */
 		public static final String getLastSuccessfulWorkTimePrefName(String prefix, int requestType, String suffix)
 		{
-			return PREFIX + requestType + (suffix != null ? suffix : "");
+			return PREFIX + prefix + "_" + requestType + (suffix != null ? suffix : "");
 		}
 	}
 }

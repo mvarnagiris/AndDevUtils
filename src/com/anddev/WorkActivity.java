@@ -161,10 +161,26 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	 */
 	protected void onWorkEvent(WorkEvent event)
 	{
-		final EventToTrack eventToTrack = eventsToTrack.get(event.getEventId());
+		boolean eventsFound = false;
+		for (String eventId : eventsToTrack.keySet())
+		{
+			if (event.getEventId().startsWith(eventId))
+			{
+				eventsFound = true;
+
+				final EventToTrack eventToTrack = eventsToTrack.get(eventId);
+
+				if (eventToTrack.workingOnPending && event.isPending())
+					onWorkStarted(event, eventToTrack.showProgress, true);
+				else if (!eventToTrack.workingOnPending && event.isStarted())
+					onWorkStarted(event, eventToTrack.showProgress, true);
+				else if (event.isFinished())
+					onWorkFinished(event, eventToTrack.showProgress, true);
+			}
+		}
 
 		// This should not happen if implemented correctly
-		if (eventToTrack == null)
+		if (!eventsFound)
 		{
 			if (BuildConfig.DEBUG)
 				Log.w(TAG,
@@ -173,12 +189,6 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			return;
 		}
 
-		if (eventToTrack.workingOnPending && event.isPending())
-			onWorkStarted(event, eventToTrack.showProgress, true);
-		else if (!eventToTrack.workingOnPending && event.isStarted())
-			onWorkStarted(event, eventToTrack.showProgress, true);
-		else if (event.isFinished())
-			onWorkFinished(event, eventToTrack.showProgress, true);
 	}
 
 	// Private methods
