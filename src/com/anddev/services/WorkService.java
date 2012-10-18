@@ -230,6 +230,24 @@ public abstract class WorkService extends IntentService
 		return "";
 	}
 
+	/**
+	 * Determine if work needs to be done or not.
+	 * 
+	 * @param intent
+	 *            Intent passed to service.
+	 * @param requestType
+	 *            Request type from intent. For convenience.
+	 * @param startTime
+	 *            Time when service started handling this intent.
+	 * @param force
+	 *            Force value from intent. For convenience.
+	 * @throws NeedExecuteException
+	 *             When work does not need to be done.
+	 */
+	protected void needExecute(Intent intent, int requestType, long startTime, long lastSuccessfulWokTime, boolean force) throws NeedExecuteException
+	{
+	}
+
 	// Abstract methods
 	// -----------------------------------------------------------------------------------------------------------------------------------
 
@@ -245,22 +263,6 @@ public abstract class WorkService extends IntentService
 	 * @throws Exception
 	 */
 	protected abstract void doWork(Intent intent, int requestType, long startTime, long lastSuccessfulWorkTime) throws Exception;
-
-	/**
-	 * Determine if work needs to be done or not.
-	 * 
-	 * @param intent
-	 *            Intent passed to service.
-	 * @param requestType
-	 *            Request type from intent. For convenience.
-	 * @param startTime
-	 *            Time when service started handling this intent.
-	 * @param force
-	 *            Force value from intent. For convenience.
-	 * @throws NeedExecuteException
-	 *             When work does not need to be done.
-	 */
-	protected abstract void needExecute(Intent intent, int requestType, long startTime, long lastSuccessfulWokTime, boolean force) throws NeedExecuteException;
 
 	/**
 	 * Create work event for current service.
