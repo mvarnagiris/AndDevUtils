@@ -27,10 +27,10 @@ public abstract class Parser
 	 * @return Object that contains parsed values.
 	 * @throws JSONException
 	 */
-	public ParsedValues parse(Object info) throws Exception
+	public ParsedValues parse(Context context, Object info) throws Exception
 	{
 		final ParsedValues parsedValues = new ParsedValues();
-		parse(parsedValues, info);
+		parse(context, parsedValues, info);
 		return parsedValues;
 	}
 
@@ -44,7 +44,7 @@ public abstract class Parser
 	 */
 	public ParsedValues parseAndStore(Context context, Object info) throws Exception
 	{
-		ParsedValues parsedValues = parse(info);
+		ParsedValues parsedValues = parse(context, info);
 		store(context, parsedValues);
 		return parsedValues;
 	}
@@ -61,7 +61,7 @@ public abstract class Parser
 	 *            Object to parse.
 	 * @throws JSONException
 	 */
-	protected abstract void parse(ParsedValues parsedValues, Object info) throws Exception;
+	protected abstract void parse(Context context, ParsedValues parsedValues, Object info) throws Exception;
 
 	/**
 	 * Persists values.
