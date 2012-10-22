@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.anddev.AndDevSettings;
 import com.anddev.BuildConfig;
 import com.anddev.images.info.BitmapInfo;
 import com.anddev.images.processors.ImageProcessor;
@@ -64,7 +65,7 @@ public class ImageLoader
 			Bitmap bitmap = imageCache.getFromMemory(imageToLoad.memoryName);
 			if (bitmap != null)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.d(ImageLoader.TAG, "Memory cache. " + imageToLoad.bitmapInfo.getUniqueName());
 				imageView.setImageBitmap(bitmap);
 				if (params.listener != null)
@@ -120,7 +121,7 @@ public class ImageLoader
 			if (!isCancelled() && imageToLoad.params.useFileCache)
 			{
 				bitmap = imageCache.getFromFile(imageToLoad);
-				if (BuildConfig.DEBUG && bitmap != null)
+				if (BuildConfig.DEBUG && bitmap != null && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.d(ImageLoader.TAG, "File cache. " + imageToLoad.bitmapInfo.getUniqueName());
 			}
 
@@ -131,7 +132,7 @@ public class ImageLoader
 				bitmap = imageToLoad.loadBitmap(context);
 
 				// Save to file cache
-				if (bitmap != null && imageToLoad.params.useFileCache && imageCache.putToFile(imageToLoad.fileName, bitmap) && BuildConfig.DEBUG)
+				if (bitmap != null && imageToLoad.params.useFileCache && imageCache.putToFile(imageToLoad.fileName, bitmap) && BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.d(ImageLoader.TAG, "Saving to file cache. " + imageToLoad.bitmapInfo.getUniqueName());
 			}
 
@@ -148,7 +149,7 @@ public class ImageLoader
 			{
 				synchronized (imageCache)
 				{
-					if (imageCache.putToMemory(imageToLoad.memoryName, bitmap) && BuildConfig.DEBUG)
+					if (imageCache.putToMemory(imageToLoad.memoryName, bitmap) && BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 						Log.d(ImageLoader.TAG, "Saving to memory cache. " + imageToLoad.bitmapInfo.getUniqueName());
 				}
 

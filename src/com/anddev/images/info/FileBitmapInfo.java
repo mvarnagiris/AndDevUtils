@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.anddev.AndDevSettings;
 import com.anddev.BuildConfig;
 import com.anddev.images.ImageLoader;
 import com.anddev.images.ImageToLoad;
@@ -80,7 +81,7 @@ public class FileBitmapInfo extends BitmapInfo
 					options.inJustDecodeBounds = false;
 				}
 
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.d(ImageLoader.TAG, "inSampleSize = " + options.inSampleSize + ". " + imageToLoad.bitmapInfo.getUniqueName());
 
 				// Load bitmap from file
@@ -88,12 +89,12 @@ public class FileBitmapInfo extends BitmapInfo
 			}
 			catch (OutOfMemoryError e)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.e(ImageLoader.TAG, "OutOfMemoryError. " + imageToLoad.bitmapInfo.getUniqueName() + ". " + e.getMessage());
 			}
 			catch (Exception e)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.w(ImageLoader.TAG, "Error loading bitmap. " + imageToLoad.bitmapInfo.getUniqueName() + ". " + e.getMessage());
 			}
 

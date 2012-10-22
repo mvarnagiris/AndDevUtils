@@ -14,6 +14,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import com.anddev.AndDevSettings;
 import com.anddev.BuildConfig;
 import com.anddev.images.ImageLoader;
 import com.anddev.images.ImageToLoad;
@@ -91,7 +92,7 @@ public class URLBitmapInfo extends BitmapInfo
 				// Download bitmap to temporary file
 				url = new URL(((URLBitmapInfo) imageToLoad.bitmapInfo).imageURL);
 
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.d(ImageLoader.TAG, "Downloading bitmap to file. " + url);
 
 				urlConnection = (HttpURLConnection) url.openConnection();
@@ -110,13 +111,13 @@ public class URLBitmapInfo extends BitmapInfo
 			}
 			catch (final MalformedURLException e)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.w(ImageLoader.TAG, "Bad url. " + url);
 				e.printStackTrace();
 			}
 			catch (final IOException e)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.w(ImageLoader.TAG, "Failed downloading bitmap to file. " + url);
 				e.printStackTrace();
 			}

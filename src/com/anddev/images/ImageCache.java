@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import com.anddev.AndDevSettings;
 import com.anddev.BuildConfig;
 import com.anddev.images.info.FileBitmapInfo;
 import com.anddev.utils.APIUtils;
@@ -129,7 +130,7 @@ public class ImageCache
 			}
 			catch (FileNotFoundException e)
 			{
-				if (BuildConfig.DEBUG)
+				if (BuildConfig.DEBUG && AndDevSettings.Logging.LOG_IMAGE_LOADER)
 					Log.w(ImageLoader.TAG, "Failed saving to file cache. " + fileName);
 				e.printStackTrace();
 			}
