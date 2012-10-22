@@ -89,14 +89,12 @@ public class FileBitmapInfo extends BitmapInfo
 			catch (OutOfMemoryError e)
 			{
 				if (BuildConfig.DEBUG)
-					Log.e(ImageLoader.TAG, "OutOfMemoryError. " + imageToLoad.bitmapInfo.getUniqueName());
-				e.printStackTrace();
+					Log.e(ImageLoader.TAG, "OutOfMemoryError. " + imageToLoad.bitmapInfo.getUniqueName() + ". " + e.getMessage());
 			}
 			catch (Exception e)
 			{
 				if (BuildConfig.DEBUG)
-					Log.w(ImageLoader.TAG, "Error loading bitmap. " + imageToLoad.bitmapInfo.getUniqueName());
-				e.printStackTrace();
+					Log.w(ImageLoader.TAG, "Error loading bitmap. " + imageToLoad.bitmapInfo.getUniqueName() + ". " + e.getMessage());
 			}
 
 			return bitmap;
