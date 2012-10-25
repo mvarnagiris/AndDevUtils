@@ -8,6 +8,8 @@ import org.json.JSONException;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 
 /**
  * Abstract parser class. Takes care of parsing and storing data.
@@ -47,6 +49,99 @@ public abstract class Parser
 		ParsedValues parsedValues = parse(context, info);
 		store(context, parsedValues);
 		return parsedValues;
+	}
+
+	// Protected methods
+	// --------------------------------------------------------------------------------------------------------------------------
+
+	protected Map<String, Long> getStringIDsMap(Context context, Uri uri, String selection, String[] selectionArgs, String stringColumn, String idColumn)
+	{
+		Map<String, Long> stringIDsMap = new HashMap<String, Long>();
+
+		Cursor c = null;
+		try
+		{
+			c = context.getContentResolver().query(uri, new String[] { idColumn, stringColumn }, selection, selectionArgs, null);
+			if (c != null && c.moveToFirst())
+			{
+				do
+				{
+					stringIDsMap.put(c.getString(1), c.getLong(0));
+				}
+				while (c.moveToNext());
+			}
+		}
+		finally
+		{
+			if (c != null && !c.isClosed())
+				c.close();
+		}
+
+		return stringIDsMap;
+	}
+
+	protected Map<Long, Long> getLongIDsMap(Context context, Uri uri, String selection, String[] selectionArgs, String longColumn, String idColumn)
+	{
+		Map<Long, Long> longIDsMap = new HashMap<Long, Long>();
+
+		Cursor c = null;
+		try
+		{
+			c = context.getContentResolver().query(uri, new String[] { idColumn, longColumn }, selection, selectionArgs, null);
+			if (c != null && c.moveToFirst())
+			{
+				do
+				{
+					longIDsMap.put(c.getLong(1), c.getLong(0));
+				}
+				while (c.moveToNext());
+			}
+		}
+		finally
+		{
+			if (c != null && !c.isClosed())
+				c.close();
+		}
+
+		return longIDsMap;
+	}
+
+	protected void replaceStringWithLong(ContentValues[] valuesArray, Map<String, Long> replaceMap, String tempColumn, String newColumn)
+	{
+		if (valuesArray != null && valuesArray.length > 0)
+		{
+			long newValue;
+			String tempValue;
+			for (ContentValues values : valuesArray)
+			{
+				tempValue = values.getAsString(tempColumn);
+				if (tempValue != null)
+					newValue = replaceMap.get(tempValue);
+				else
+					newValue = 0;
+				values.remove(tempColumn);
+				values.put(newColumn, newValue);
+			}
+		}
+	}
+
+	protected void replaceLongWithLong(ContentValues[] valuesArray, Map<Long, Long> replaceMap, String tempColumn, String newColumn)
+	{
+		if (valuesArray != null && valuesArray.length > 0)
+		{
+			long newValue;
+			Long tempValue;
+			for (ContentValues values : valuesArray)
+			{
+				tempValue = values.getAsLong(tempColumn);
+				if (tempValue != null)
+					newValue = replaceMap.get(tempValue);
+				else
+					newValue = 0;
+				values.remove(tempColumn);
+				values.put(newColumn, newValue);
+			}
+		}
 	}
 
 	// Abstract methods
