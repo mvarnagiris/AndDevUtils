@@ -35,6 +35,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	protected void onPostCreate(Bundle savedInstanceState)
 	{
 		super.onPostCreate(savedInstanceState);
+		setSupportProgressBarIndeterminateVisibility(false);
 
 		// Init events to track
 		EventToTrack[] eventsToTrackArray = getEventsToTrack();
