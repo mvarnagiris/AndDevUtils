@@ -6,14 +6,14 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 
 /**
  * Adapter for swipable fragments.
  * 
  * @author Mantas Varnagiris
  */
-public class FragmentCursorPagerAdapter extends FragmentPagerAdapter
+public class FragmentCursorPagerAdapter extends FragmentStatePagerAdapter
 {
 	protected Context	context;
 	protected Cursor	cursor;
