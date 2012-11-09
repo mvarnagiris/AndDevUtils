@@ -2,6 +2,7 @@ package com.anddev.adapters;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -22,16 +23,16 @@ import android.widget.TextView;
  */
 public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapter implements SectionIndexer
 {
-	protected static final int		TYPE_HEADER	= 1;
-	protected static final int		TYPE_NORMAL	= 0;
+	protected static final int				TYPE_HEADER	= 1;
+	protected static final int				TYPE_NORMAL	= 0;
 
-	private static final int		TYPE_COUNT	= 2;
+	protected static final int				TYPE_COUNT	= 2;
 
-	private final String			indexColumnName;
-	protected final int				headerLayoutId;
-	protected final int				headerTextViewId;
-	private String[]				sections;
-	private Map<Integer, Integer>	sectionToPosition;
+	protected final String					indexColumnName;
+	protected final int						headerLayoutId;
+	protected final int						headerTextViewId;
+	protected final List<String>			sectionsList;
+	protected final Map<Integer, Integer>	sectionToPosition;
 
 	public AbstractSectionedCursorAdapter(Context context, Cursor c, String indexColumnName, int headerLayoutId, int headerTextViewId)
 	{
@@ -39,6 +40,8 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		this.indexColumnName = indexColumnName;
 		this.headerLayoutId = headerLayoutId;
 		this.headerTextViewId = headerTextViewId;
+		this.sectionsList = new ArrayList<String>();
+		this.sectionToPosition = new TreeMap<Integer, Integer>();
 		prepareIndexer(c);
 	}
 
@@ -52,10 +55,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	@Override
 	public int getCount()
 	{
-		if (super.getCount() != 0)
-			return super.getCount() + (sections == null ? 0 : sections.length);
-
-		return 0;
+		return super.getCount() + sectionsList.size();
 	}
 
 	@Override
@@ -110,7 +110,12 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 			final TextView header_TV = (TextView) convertView.findViewById(headerTextViewId);
 
-			header_TV.setText((String) getSections()[getSectionForPosition(position)]);
+			if (sectionsList.size() > 0)
+			{
+				final int section = getSectionForPosition(position);
+				if (section >= 0)
+					header_TV.setText(sectionsList.get(section));
+			}
 			return convertView;
 		}
 
@@ -128,22 +133,21 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	 */
 	private void prepareIndexer(Cursor c)
 	{
-		sectionToPosition = new TreeMap<Integer, Integer>();
-
-		ArrayList<String> sectionsList = new ArrayList<String>();
-		Set<String> sectionsSet = new HashSet<String>();
+		sectionsList.clear();
+		sectionToPosition.clear();
 
 		if (c == null || !c.moveToFirst())
 			return;
 
+		final Set<String> sectionsSet = new HashSet<String>();
 		final int iIndexColumn = c.getColumnIndexOrThrow(indexColumnName);
-
 		int i = 0;
+		String sectionValue;
+		String parsedSectionValue;
 		do
 		{
-
-			String sectionValue = c.getString(iIndexColumn);
-			final String parsedSectionValue = parseIndexColumnValue(sectionValue);
+			sectionValue = c.getString(iIndexColumn);
+			parsedSectionValue = parseIndexColumnValue(sectionValue);
 			if (!TextUtils.isEmpty(parsedSectionValue))
 				sectionValue = parsedSectionValue;
 
@@ -155,9 +159,6 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 			i++;
 		}
 		while (c.moveToNext());
-
-		sections = new String[sectionsList.size()];
-		sectionsList.toArray(sections);
 	}
 
 	// Abstract methods
@@ -178,15 +179,17 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	@Override
 	public int getPositionForSection(int section)
 	{
+		if (!sectionToPosition.containsKey(section))
+			return 0;
 		return sectionToPosition.get(section);
 	}
 
 	@Override
 	public int getSectionForPosition(int position)
 	{
-		final int sectionsCount = sections.length;
-		int i = 0;
+		final int sectionsCount = sectionsList.size();
 
+		int i = 0;
 		while (i < sectionsCount && getPositionForSection(i) <= position)
 			i++;
 
@@ -197,6 +200,8 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	@Override
 	public Object[] getSections()
 	{
+		String[] sections = new String[sectionsList.size()];
+		sectionsList.toArray(sections);
 		return sections;
 	}
 }
