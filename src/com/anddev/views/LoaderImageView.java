@@ -11,10 +11,10 @@ import com.anddev.images.processors.ScaleImageProcessor;
 
 public class LoaderImageView extends ImageView
 {
-	private final ImageLoader	imageLoader		= ImageLoader.getInstance(getContext());
-	private ImageParams			params			= null;
-	private ImageParams			paramsToCopy	= null;
-	private BitmapInfo			bitmapInfo		= null;
+	protected final ImageLoader	imageLoader		= ImageLoader.getInstance(getContext());
+	protected ImageParams		params			= null;
+	protected ImageParams		paramsToCopy	= null;
+	protected BitmapInfo		bitmapInfo		= null;
 
 	public LoaderImageView(Context context)
 	{
@@ -40,7 +40,7 @@ public class LoaderImageView extends ImageView
 		{
 			boolean needLoadImages = params == null && bitmapInfo != null;
 			params = new ImageParams(w, h, paramsToCopy != null ? paramsToCopy.scaleType : ScaleImageProcessor.ScaleType.SCALE_AND_CROP_TO_FILL,
-							paramsToCopy != null ? paramsToCopy.imageProcessor : null);
+					paramsToCopy != null ? paramsToCopy.imageProcessor : null);
 			copyParams();
 			if (needLoadImages)
 			{
@@ -75,10 +75,10 @@ public class LoaderImageView extends ImageView
 		this.paramsToCopy = paramsToCopy;
 	}
 
-	// Private methods
+	// Protected methods
 	// --------------------------------------------------------------------------------------------------------------------------------
 
-	private void copyParams()
+	protected void copyParams()
 	{
 		if (paramsToCopy != null)
 		{
