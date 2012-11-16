@@ -77,6 +77,11 @@ public class FragmentCursorPagerAdapter extends FragmentStatePagerAdapter
 		return oldCursor;
 	}
 
+	public Cursor getCursor()
+	{
+		return cursor;
+	}
+
 	// Protected methods
 	// --------------------------------------------------------------------------------------------------------------------------
 
