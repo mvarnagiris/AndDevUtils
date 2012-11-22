@@ -11,24 +11,29 @@ import com.anddev.images.processors.ScaleImageProcessor;
 
 public class LoaderImageView extends ImageView
 {
-	protected final ImageLoader	imageLoader		= ImageLoader.getInstance(getContext());
+	protected final ImageLoader	imageLoader;
 	protected ImageParams		params			= null;
 	protected ImageParams		paramsToCopy	= null;
 	protected BitmapInfo		bitmapInfo		= null;
 
 	public LoaderImageView(Context context)
 	{
-		super(context);
+		this(context, null);
 	}
 
 	public LoaderImageView(Context context, AttributeSet attrs)
 	{
-		super(context, attrs);
+		this(context, attrs, 0);
 	}
 
 	public LoaderImageView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
+
+		if (!isInEditMode())
+			imageLoader = ImageLoader.getInstance(getContext());
+		else
+			imageLoader = null;
 	}
 
 	@Override
