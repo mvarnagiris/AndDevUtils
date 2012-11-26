@@ -72,7 +72,8 @@ public abstract class WorkFragment extends SherlockFragment
 	/**
 	 * Create and return an array of work events to track. This array will be used to register for events that you want to track.
 	 * <p>
-	 * <b>Important:</b> Also you must implement {@code onEvent(WorkEvent)} method for each work event class.
+	 * <b>Important:</b> You must implement {@code onEvent(WorkEvent)} method for each work event class. Note that if you want to use any arguments for events,
+	 * you must set them before {@code super.onCreate(Bundle)} is called.
 	 * </p>
 	 * 
 	 * @return Array of {@link EventToTrack} instances.
