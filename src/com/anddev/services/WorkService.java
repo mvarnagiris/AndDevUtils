@@ -3,6 +3,7 @@ package com.anddev.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.anddev.BuildConfig;
@@ -41,7 +42,10 @@ public abstract class WorkService extends IntentService
 		final int requestType = intent.getIntExtra(EXTRA_REQUEST_TYPE, RT_DEFAULT);
 
 		if (BuildConfig.DEBUG)
-			Log.i(TAG, "Service pending. RT: " + requestType);
+		{
+			final String rtTitle = getTitleForRT(requestType);
+			Log.i(TAG, getClass().getSimpleName() + " - pending. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
+		}
 
 		// Send "pending" event
 		final WorkEvent workEvent = getWorkEvent(intent, requestType);
@@ -65,6 +69,8 @@ public abstract class WorkService extends IntentService
 		final String prefsKey = PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(getClass().getName(), requestType,
 				getPrefsSuffix(intent, requestType));
 		final long lastSuccessfulWorkTime = prefs.getLong(prefsKey, 0);
+		final String rtTitle = getTitleForRT(requestType);
+		final String className = getClass().getSimpleName();
 
 		try
 		{
@@ -76,7 +82,9 @@ public abstract class WorkService extends IntentService
 			// No need to execute this service
 
 			if (BuildConfig.DEBUG)
-				Log.i(TAG, "Service will not execute. RT: " + requestType + ". Reason: " + e.getMessage());
+				Log.i(TAG,
+						className + " - not executed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : "") + ". Reason: "
+								+ e.getMessage());
 
 			// Send "not executed" event
 			workEvent = getWorkEvent(intent, requestType);
@@ -89,7 +97,7 @@ public abstract class WorkService extends IntentService
 		}
 
 		if (BuildConfig.DEBUG)
-			Log.i(TAG, "Service start. RT: " + requestType);
+			Log.i(TAG, className + " - started. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
 
 		// Send "started" event
 		workEvent = getWorkEvent(intent, requestType);
@@ -107,7 +115,7 @@ public abstract class WorkService extends IntentService
 			PrefsUtils.getPrefs(getApplicationContext()).edit().putLong(prefsKey, startTime).commit();
 
 			if (BuildConfig.DEBUG)
-				Log.i(TAG, "Service succeeded. RT: " + requestType);
+				Log.i(TAG, className + " - succeeded. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
 
 			// Send "succeeded" event
 			workEvent = getWorkEvent(intent, requestType);
@@ -118,7 +126,7 @@ public abstract class WorkService extends IntentService
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, "Service failed. RT: " + requestType, e);
+			Log.e(TAG, className + " - failed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
 
 			// Send "failed" broadcast
 			workEvent = getWorkEvent(intent, requestType);
@@ -246,6 +254,18 @@ public abstract class WorkService extends IntentService
 	 */
 	protected void needExecute(Intent intent, int requestType, long startTime, long lastSuccessfulWokTime, boolean force) throws NeedExecuteException
 	{
+	}
+
+	/**
+	 * Override this method and return title for request type for better logging.
+	 * 
+	 * @param requestType
+	 *            Request type
+	 * @return Title for request type, or {@code null}.
+	 */
+	protected String getTitleForRT(int requestType)
+	{
+		return null;
 	}
 
 	// Abstract methods
