@@ -44,7 +44,7 @@ public abstract class WorkService extends IntentService
 		if (BuildConfig.DEBUG)
 		{
 			final String rtTitle = getTitleForRT(intent, requestType);
-			Log.i(TAG, getClass().getSimpleName() + " - pending. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
+			Log.i(TAG, getClass().getSimpleName() + " - pending. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? " (" + rtTitle + ")" : ""));
 		}
 
 		// Send "pending" event
@@ -83,7 +83,7 @@ public abstract class WorkService extends IntentService
 
 			if (BuildConfig.DEBUG)
 				Log.i(TAG,
-						className + " - not executed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : "") + ". Reason: "
+						className + " - not executed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? " (" + rtTitle + ")" : "") + ". Reason: "
 								+ e.getMessage());
 
 			// Send "not executed" event
@@ -97,7 +97,7 @@ public abstract class WorkService extends IntentService
 		}
 
 		if (BuildConfig.DEBUG)
-			Log.i(TAG, className + " - started. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
+			Log.i(TAG, className + " - started. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? " (" + rtTitle + ")" : ""));
 
 		// Send "started" event
 		workEvent = getWorkEvent(intent, requestType);
@@ -115,7 +115,7 @@ public abstract class WorkService extends IntentService
 			PrefsUtils.getPrefs(getApplicationContext()).edit().putLong(prefsKey, startTime).commit();
 
 			if (BuildConfig.DEBUG)
-				Log.i(TAG, className + " - succeeded. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
+				Log.i(TAG, className + " - succeeded. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? " (" + rtTitle + ")" : ""));
 
 			// Send "succeeded" event
 			workEvent = getWorkEvent(intent, requestType);
@@ -126,7 +126,7 @@ public abstract class WorkService extends IntentService
 		}
 		catch (Exception e)
 		{
-			Log.e(TAG, className + " - failed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
+			Log.e(TAG, className + " - failed. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? " (" + rtTitle + ")" : ""));
 
 			// Send "failed" broadcast
 			workEvent = getWorkEvent(intent, requestType);
