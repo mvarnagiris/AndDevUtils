@@ -43,7 +43,7 @@ public abstract class WorkService extends IntentService
 
 		if (BuildConfig.DEBUG)
 		{
-			final String rtTitle = getTitleForRT(requestType);
+			final String rtTitle = getTitleForRT(intent, requestType);
 			Log.i(TAG, getClass().getSimpleName() + " - pending. RT: " + requestType + (!TextUtils.isEmpty(rtTitle) ? "(" + rtTitle + ")" : ""));
 		}
 
@@ -69,7 +69,7 @@ public abstract class WorkService extends IntentService
 		final String prefsKey = PrefsUtils.WorkServicePrefs.getLastSuccessfulWorkTimePrefName(getClass().getName(), requestType,
 				getPrefsSuffix(intent, requestType));
 		final long lastSuccessfulWorkTime = prefs.getLong(prefsKey, 0);
-		final String rtTitle = getTitleForRT(requestType);
+		final String rtTitle = getTitleForRT(intent, requestType);
 		final String className = getClass().getSimpleName();
 
 		try
@@ -259,11 +259,13 @@ public abstract class WorkService extends IntentService
 	/**
 	 * Override this method and return title for request type for better logging.
 	 * 
+	 * @param intent
+	 *            Intent passed to service.
 	 * @param requestType
 	 *            Request type
 	 * @return Title for request type, or {@code null}.
 	 */
-	protected String getTitleForRT(int requestType)
+	protected String getTitleForRT(Intent intent, int requestType)
 	{
 		return null;
 	}
