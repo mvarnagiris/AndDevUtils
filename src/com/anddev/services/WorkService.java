@@ -131,7 +131,7 @@ public abstract class WorkService extends IntentService
 			workEvent = getWorkEvent(intent, requestType);
 			workEvent.requestType = requestType;
 			workEvent.status = WorkEvent.STATUS_FAILED;
-			workEvent.errorMessage = e.getMessage();
+			workEvent.exception = e;
 			onWorkFailed(intent, requestType, workEvent, startTime, e);
 			workEventBus.postWork(workEvent);
 		}
