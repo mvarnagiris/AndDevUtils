@@ -5,18 +5,20 @@ import java.util.Map;
 
 import de.greenrobot.event.EventBus;
 
-public class WorkEventBus extends EventBus
+public class WorkEvents
 {
 	// Keeps track of currently working/pending tasks
 	protected final Map<String, Integer>	pendingTasks	= new HashMap<String, Integer>();
 	protected final Map<String, Integer>	workingTasks	= new HashMap<String, Integer>();
 
-	private static WorkEventBus				instance		= null;
+	private static WorkEvents				instance		= null;
 
-	public static WorkEventBus getDefault()
+	protected final EventBus				eventBus		= EventBus.getDefault();
+
+	public static WorkEvents getDefault()
 	{
 		if (instance == null)
-			instance = new WorkEventBus();
+			instance = new WorkEvents();
 		return instance;
 	}
 
@@ -61,7 +63,7 @@ public class WorkEventBus extends EventBus
 				pendingTasks.put(eventId, count - 1);
 		}
 
-		post(workEvent);
+		eventBus.post(workEvent);
 	}
 
 	public boolean isWorking(String eventId, boolean workingOnPending)

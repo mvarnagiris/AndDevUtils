@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.anddev.BuildConfig;
 import com.anddev.events.WorkEvent;
-import com.anddev.events.WorkEventBus;
+import com.anddev.events.WorkEvents;
 import com.anddev.utils.PrefsUtils;
 
 /**
@@ -25,7 +25,7 @@ public abstract class WorkService extends IntentService
 	// Default value used if no EXTRA_REQUEST_TYPE is passed
 	public static final int				RT_DEFAULT			= -1;
 
-	protected static final WorkEventBus	workEventBus		= WorkEventBus.getDefault();
+	protected static final WorkEvents	workEventBus		= WorkEvents.getDefault();
 
 	protected final String				TAG;
 

@@ -9,8 +9,10 @@ import android.util.Log;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.anddev.WorkActivity.EventToTrack;
 import com.anddev.events.WorkEvent;
-import com.anddev.events.WorkEventBus;
+import com.anddev.events.WorkEvents;
 import com.anddev.services.WorkService;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Allows conveniently register for {@link WorkEvents}. You must make sure to implement {@code onEvent()} methods.
@@ -19,7 +21,8 @@ import com.anddev.services.WorkService;
  */
 public abstract class WorkFragment extends SherlockFragment
 {
-	protected final WorkEventBus				workEventBus	= WorkEventBus.getDefault();
+	protected final EventBus					eventBus		= EventBus.getDefault();
+	protected final WorkEvents					workEvents		= WorkEvents.getDefault();
 	protected final Map<String, EventToTrack>	eventsToTrack	= new HashMap<String, EventToTrack>();
 
 	private static final String					TAG				= "WorkFragment";
@@ -172,8 +175,8 @@ public abstract class WorkFragment extends SherlockFragment
 			eventToTrack = eventsToTrack.get(eventId);
 			if (isOnCreate && eventToTrack.trackOnCreate || !isOnCreate && !eventToTrack.trackOnCreate)
 			{
-				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
-				if (workEventBus.isWorking(eventId, eventToTrack.workingOnPending))
+				eventBus.register(this, eventToTrack.event.getClass());
+				if (workEvents.isWorking(eventId, eventToTrack.workingOnPending))
 					onWorkStarted(eventToTrack.event, false);
 			}
 		}
@@ -187,8 +190,8 @@ public abstract class WorkFragment extends SherlockFragment
 			eventToTrack = eventsToTrack.get(eventId);
 			if (isOnDestroy && eventToTrack.trackOnCreate || !isOnDestroy && !eventToTrack.trackOnCreate)
 			{
-				workEventBus.unregister(this, eventToTrack.event.getClass());
-				if (workEventBus.isWorking(eventId, eventToTrack.workingOnPending))
+				eventBus.unregister(this, eventToTrack.event.getClass());
+				if (workEvents.isWorking(eventId, eventToTrack.workingOnPending))
 					onWorkFinished(eventToTrack.event, false);
 			}
 		}

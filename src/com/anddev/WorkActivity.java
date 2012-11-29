@@ -9,15 +9,18 @@ import android.util.Log;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.anddev.events.WorkEvent;
-import com.anddev.events.WorkEventBus;
+import com.anddev.events.WorkEvents;
 import com.anddev.services.WorkService;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * @author Mantas Varnagiris
  */
 public abstract class WorkActivity extends SherlockFragmentActivity
 {
-	protected final WorkEventBus				workEventBus	= WorkEventBus.getDefault();
+	protected final EventBus					eventBus		= EventBus.getDefault();
+	protected final WorkEvents					workEvents		= WorkEvents.getDefault();
 	protected final Map<String, EventToTrack>	eventsToTrack	= new HashMap<String, EventToTrack>();
 	protected int								workingCount	= 0;
 
@@ -203,8 +206,8 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			eventToTrack = eventsToTrack.get(eventId);
 			if (isOnCreate && eventToTrack.trackOnCreate || !isOnCreate && !eventToTrack.trackOnCreate)
 			{
-				workEventBus.registerForMainThread(this, eventToTrack.event.getClass());
-				if (workEventBus.isWorking(eventId, eventToTrack.workingOnPending))
+				eventBus.register(this, eventToTrack.event.getClass());
+				if (workEvents.isWorking(eventId, eventToTrack.workingOnPending))
 					onWorkStarted(eventToTrack.event, eventToTrack.showProgress, false);
 			}
 		}
@@ -218,8 +221,8 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 			eventToTrack = eventsToTrack.get(eventId);
 			if (isOnDestroy && eventToTrack.trackOnCreate || !isOnDestroy && !eventToTrack.trackOnCreate)
 			{
-				workEventBus.unregister(this, eventToTrack.event.getClass());
-				if (workEventBus.isWorking(eventId, eventToTrack.workingOnPending))
+				eventBus.unregister(this, eventToTrack.event.getClass());
+				if (workEvents.isWorking(eventId, eventToTrack.workingOnPending))
 					onWorkFinished(eventToTrack.event, eventToTrack.showProgress, false);
 			}
 		}
