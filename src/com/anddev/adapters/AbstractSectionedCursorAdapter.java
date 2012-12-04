@@ -10,11 +10,9 @@ import java.util.TreeMap;
 import android.content.Context;
 import android.database.Cursor;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SectionIndexer;
-import android.widget.TextView;
 
 /**
  * Cursor adapter that puts header view at the top of each section.
@@ -23,23 +21,19 @@ import android.widget.TextView;
  */
 public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapter implements SectionIndexer
 {
-	protected static final int				TYPE_HEADER	= 1;
 	protected static final int				TYPE_NORMAL	= 0;
+	protected static final int				TYPE_HEADER	= 1;
 
 	protected static final int				TYPE_COUNT	= 2;
 
-	protected final String					indexColumnName;
-	protected final int						headerLayoutId;
-	protected final int						headerTextViewId;
+	protected final String[]				indexColumnNames;
 	protected final List<String>			sectionsList;
 	protected final Map<Integer, Integer>	sectionToPosition;
 
-	public AbstractSectionedCursorAdapter(Context context, Cursor c, String indexColumnName, int headerLayoutId, int headerTextViewId)
+	public AbstractSectionedCursorAdapter(Context context, Cursor c, String[] indexColumnNames)
 	{
 		super(context, c);
-		this.indexColumnName = indexColumnName;
-		this.headerLayoutId = headerLayoutId;
-		this.headerTextViewId = headerTextViewId;
+		this.indexColumnNames = indexColumnNames;
 		this.sectionsList = new ArrayList<String>();
 		this.sectionToPosition = new TreeMap<Integer, Integer>();
 		prepareIndexer(c);
@@ -48,6 +42,8 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	@Override
 	public Cursor swapCursor(Cursor newCursor)
 	{
+		if (newCursor != null)
+			findIndexes(newCursor);
 		prepareIndexer(newCursor);
 		return super.swapCursor(newCursor);
 	}
@@ -85,7 +81,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (getItemViewType(position) == TYPE_HEADER)
 			return false;
 
-		return true;
+		return super.isEnabled(position);
 	}
 
 	@Override
@@ -105,17 +101,11 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		// If type is header, set header title
 		if (type == TYPE_HEADER)
 		{
+			mCursor.moveToPosition(getPositionForSection(getSectionForPosition(position)));
 			if (convertView == null)
-				convertView = LayoutInflater.from(mContext).inflate(headerLayoutId, parent, false);
+				convertView = newHeaderView(mContext, mCursor, parent);
 
-			final TextView header_TV = (TextView) convertView.findViewById(headerTextViewId);
-
-			if (sectionsList.size() > 0)
-			{
-				final int section = getSectionForPosition(position);
-				if (section >= 0)
-					header_TV.setText(sectionsList.get(section));
-			}
+			bindHeaderView(convertView, mContext, mCursor);
 			return convertView;
 		}
 
@@ -139,22 +129,31 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (c == null || !c.moveToFirst())
 			return;
 
-		final Set<String> sectionsSet = new HashSet<String>();
-		final int iIndexColumn = c.getColumnIndexOrThrow(indexColumnName);
+		final int indexColumnCount = indexColumnNames.length;
+		final Set<String> sectionsUniqueIDsSet = new HashSet<String>();
+		final int[] iIndexColumns = new int[indexColumnCount];
+		for (int i = 0; i < indexColumnCount; i++)
+		{
+			iIndexColumns[i] = c.getColumnIndex(indexColumnNames[i]);
+		}
+
 		int i = 0;
-		String sectionValue;
+		String[] notParsedSectionValues = new String[indexColumnCount];
 		String parsedSectionValue;
 		do
 		{
-			sectionValue = c.getString(iIndexColumn);
-			parsedSectionValue = parseIndexColumnValue(sectionValue);
-			if (!TextUtils.isEmpty(parsedSectionValue))
-				sectionValue = parsedSectionValue;
-
-			if (sectionsSet.add(sectionValue))
+			if (sectionsUniqueIDsSet.add(getRowSectionUniqueId(c)))
 			{
+				for (int e = 0; e < indexColumnCount; e++)
+				{
+					notParsedSectionValues[e] = c.getString(iIndexColumns[e]);
+				}
+				parsedSectionValue = parseIndexColumnValue(notParsedSectionValues);
+				if (TextUtils.isEmpty(parsedSectionValue))
+					parsedSectionValue = "";
+
 				sectionToPosition.put(sectionsList.size(), i + sectionsList.size());
-				sectionsList.add(sectionValue);
+				sectionsList.add(parsedSectionValue);
 			}
 			i++;
 		}
@@ -164,14 +163,13 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	// Abstract methods
 	// ------------------------------------------------------------------------------------------------------------------------------------
 
-	/**
-	 * You can parse the value for header here. If you do not want to parse, just return the same value or {@code null}.
-	 * 
-	 * @param indexColumnValue
-	 *            Value to parse.
-	 * @return Parsed/Same value or {@code null}. {@code null} and empty values will be ignored.
-	 */
-	protected abstract String parseIndexColumnValue(String indexColumnValue);
+	protected abstract String parseIndexColumnValue(String[] indexColumnValues);
+
+	protected abstract String getRowSectionUniqueId(Cursor c);
+
+	protected abstract View newHeaderView(Context context, Cursor c, ViewGroup root);
+
+	protected abstract void bindHeaderView(View view, Context context, Cursor c);
 
 	// SectionIndexer
 	// ------------------------------------------------------------------------------------------------------------------------------------
