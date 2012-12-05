@@ -108,11 +108,12 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		// Header views are handled by subclass
 		if (type == TYPE_HEADER)
 		{
+			final int section = getSectionForPosition(position);
 			mCursor.moveToPosition(getCursorPosition(position) + 1);
 			if (convertView == null)
-				convertView = newHeaderView(mContext, mCursor, parent);
+				convertView = newHeaderView(mContext, section, mCursor, parent);
 
-			bindHeaderView(convertView, mContext, mCursor);
+			bindHeaderView(convertView, mContext, section, mCursor);
 			return convertView;
 		}
 
@@ -230,9 +231,9 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 	protected abstract String getRowSectionUniqueId(Cursor c);
 
-	protected abstract View newHeaderView(Context context, Cursor c, ViewGroup root);
+	protected abstract View newHeaderView(Context context, int section, Cursor c, ViewGroup root);
 
-	protected abstract void bindHeaderView(View view, Context context, Cursor c);
+	protected abstract void bindHeaderView(View view, Context context, int section, Cursor c);
 
 	// SectionIndexer
 	// ------------------------------------------------------------------------------------------------------------------------------------
