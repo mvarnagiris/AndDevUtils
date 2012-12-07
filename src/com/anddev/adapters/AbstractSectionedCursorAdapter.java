@@ -92,6 +92,15 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	}
 
 	@Override
+	public long getItemId(int position)
+	{
+		if (getItemViewType(position) == TYPE_NORMAL)
+			return super.getItemId(getCursorPosition(position));
+
+		return 0;
+	}
+
+	@Override
 	public Object getItem(int position)
 	{
 		if (getItemViewType(position) == TYPE_NORMAL)
