@@ -276,7 +276,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		for (int i = 0; i < sectionsList.size(); i++)
 		{
 			sectionInfo = sectionsList.get(i);
-			totalSize += 1 + (isExpandable ? sectionInfo.isExpanded ? sectionInfo.size : 0 : 0);
+			totalSize += 1 + (sectionInfo.isExpanded || !isExpandable ? sectionInfo.size : 0);
 
 			if (position < totalSize)
 				return section;
