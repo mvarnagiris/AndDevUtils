@@ -33,10 +33,7 @@ public abstract class WorkFragment extends SherlockFragment
 		super.onCreate(savedInstanceState);
 
 		// Init events to track
-		EventToTrack[] eventsToTrackArray = getEventsToTrack();
-		if (eventsToTrackArray != null)
-			for (EventToTrack eventToTrack : eventsToTrackArray)
-				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
+		updateEventsToTrack(false);
 
 		// Register events
 		registerWorkEvents(true);
@@ -84,6 +81,25 @@ public abstract class WorkFragment extends SherlockFragment
 	protected EventToTrack[] getEventsToTrack()
 	{
 		return null;
+	}
+
+	protected void updateEventsToTrack(boolean reRegisterEvents)
+	{
+		if (reRegisterEvents)
+		{
+			unregisterWorkEvents(true);
+			unregisterWorkEvents(false);
+		}
+		eventsToTrack.clear();
+		EventToTrack[] eventsToTrackArray = getEventsToTrack();
+		if (eventsToTrackArray != null)
+			for (EventToTrack eventToTrack : eventsToTrackArray)
+				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
+		if (reRegisterEvents)
+		{
+			registerWorkEvents(true);
+			registerWorkEvents(false);
+		}
 	}
 
 	/**
