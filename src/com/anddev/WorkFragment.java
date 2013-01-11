@@ -33,7 +33,7 @@ public abstract class WorkFragment extends SherlockFragment
 		super.onCreate(savedInstanceState);
 
 		// Init events to track
-		updateEventsToTrack(false);
+		updateEventsToTrack();
 
 		// Register events
 		registerWorkEvents(true);
@@ -83,23 +83,13 @@ public abstract class WorkFragment extends SherlockFragment
 		return null;
 	}
 
-	protected void updateEventsToTrack(boolean reRegisterEvents)
+	protected void updateEventsToTrack()
 	{
-		if (reRegisterEvents)
-		{
-			unregisterWorkEvents(true);
-			unregisterWorkEvents(false);
-		}
 		eventsToTrack.clear();
 		EventToTrack[] eventsToTrackArray = getEventsToTrack();
 		if (eventsToTrackArray != null)
 			for (EventToTrack eventToTrack : eventsToTrackArray)
 				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
-		if (reRegisterEvents)
-		{
-			registerWorkEvents(true);
-			registerWorkEvents(false);
-		}
 	}
 
 	/**
