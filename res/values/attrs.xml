@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="roboto_typeface" format="enum">
+        <enum name="light" value="0" />
+        <enum name="thin" value="1" />
+        <enum name="condensed" value="2" />
+    </attr>
+
+    <declare-styleable name="RTextView">
+        <attr name="roboto_typeface" />
+    </declare-styleable>
+    <declare-styleable name="REditText">
+        <attr name="roboto_typeface" />
+    </declare-styleable>
     <declare-styleable name="ClearableEditText">
         <attr name="clearDrawable" format="reference" />
     </declare-styleable>
