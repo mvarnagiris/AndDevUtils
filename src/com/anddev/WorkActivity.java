@@ -41,10 +41,7 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 		setSupportProgressBarIndeterminateVisibility(false);
 
 		// Init events to track
-		EventToTrack[] eventsToTrackArray = getEventsToTrack();
-		if (eventsToTrackArray != null)
-			for (EventToTrack eventToTrack : eventsToTrackArray)
-				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
+		updateEventsToTrack();
 
 		// Register events
 		registerWorkEvents(true);
@@ -93,6 +90,15 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 	protected EventToTrack[] getEventsToTrack()
 	{
 		return null;
+	}
+
+	protected void updateEventsToTrack()
+	{
+		eventsToTrack.clear();
+		EventToTrack[] eventsToTrackArray = getEventsToTrack();
+		if (eventsToTrackArray != null)
+			for (EventToTrack eventToTrack : eventsToTrackArray)
+				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
 	}
 
 	/**
