@@ -110,7 +110,7 @@ public abstract class Parser
 	{
 		if (valuesArray != null && valuesArray.length > 0)
 		{
-			long newValue;
+			Long newValue;
 			String tempValue;
 			for (ContentValues values : valuesArray)
 			{
@@ -118,7 +118,9 @@ public abstract class Parser
 				if (tempValue != null)
 					newValue = replaceMap.get(tempValue);
 				else
-					newValue = 0;
+					newValue = 0L;
+				if (newValue == null)
+					newValue = 0L;
 				values.remove(tempColumn);
 				values.put(newColumn, newValue);
 			}
