@@ -55,7 +55,8 @@ public class RTextView extends TextView
 			try
 			{
 				final int typefacePosition = a.getInteger(R.styleable.RTextView_roboto_typeface, -1);
-				setTypeface(TypefaceCode.values()[typefacePosition]);
+				if (typefacePosition >= 0)
+					setTypeface(TypefaceCode.values()[typefacePosition]);
 			}
 			finally
 			{
