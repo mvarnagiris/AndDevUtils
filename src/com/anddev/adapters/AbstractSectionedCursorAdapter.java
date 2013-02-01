@@ -24,21 +24,21 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 	protected static final int			TYPE_COUNT	= 2;
 
-	protected final String[]			indexColumnNames;
 	protected final List<SectionInfo>	sectionsList;
 	protected final boolean				isExpandable;
 
-	public AbstractSectionedCursorAdapter(Context context, Cursor c, String[] indexColumnNames)
+	public AbstractSectionedCursorAdapter(Context context, Cursor c)
 	{
-		this(context, c, indexColumnNames, false);
+		this(context, c, false);
 	}
 
-	public AbstractSectionedCursorAdapter(Context context, Cursor c, String[] indexColumnNames, boolean isExpandable)
+	public AbstractSectionedCursorAdapter(Context context, Cursor c, boolean isExpandable)
 	{
 		super(context, c);
-		this.indexColumnNames = indexColumnNames;
 		this.sectionsList = new ArrayList<SectionInfo>();
 		this.isExpandable = isExpandable;
+		if (c != null)
+			findIndexes(c);
 		prepareIndexer(c);
 	}
 
@@ -164,27 +164,16 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (c == null || !c.moveToFirst())
 			return;
 
-		final int indexColumnCount = indexColumnNames.length;
 		final Set<String> sectionsUniqueIDsSet = new HashSet<String>();
-		final int[] iIndexColumns = new int[indexColumnCount];
-		for (int i = 0; i < indexColumnCount; i++)
-		{
-			iIndexColumns[i] = c.getColumnIndex(indexColumnNames[i]);
-		}
 
 		int i = 0;
 		int size = 0;
-		String[] notParsedSectionValues = new String[indexColumnCount];
 		String parsedSectionValue;
 		do
 		{
 			if (sectionsUniqueIDsSet.add(getRowSectionUniqueId(c)))
 			{
-				for (int e = 0; e < indexColumnCount; e++)
-				{
-					notParsedSectionValues[e] = c.getString(iIndexColumns[e]);
-				}
-				parsedSectionValue = parseIndexColumnValue(notParsedSectionValues);
+				parsedSectionValue = getIndexColumnValue(c);
 				if (TextUtils.isEmpty(parsedSectionValue))
 					parsedSectionValue = "";
 
@@ -236,7 +225,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 	protected abstract boolean onToggleSection(int section, boolean isExpanded, Cursor c);
 
-	protected abstract String parseIndexColumnValue(String[] indexColumnValues);
+	protected abstract String getIndexColumnValue(Cursor c);
 
 	protected abstract String getRowSectionUniqueId(Cursor c);
 
