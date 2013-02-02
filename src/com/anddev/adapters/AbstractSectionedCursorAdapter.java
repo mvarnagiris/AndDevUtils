@@ -93,7 +93,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	public boolean isEnabled(int position)
 	{
 		if (getItemViewType(position) == TYPE_HEADER)
-			return isExpandable ? true : false;
+			return isExpandable || useFirstAsHeader ? true : false;
 
 		return super.isEnabled(getCursorPosition(position));
 	}
@@ -101,21 +101,13 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	@Override
 	public long getItemId(int position)
 	{
-		if (getItemViewType(position) == TYPE_NORMAL)
-			return super.getItemId(getCursorPosition(position));
-
-		mCursor.moveToPosition(position);
-		return 0;
+		return super.getItemId(getCursorPosition(position));
 	}
 
 	@Override
 	public Object getItem(int position)
 	{
-		if (getItemViewType(position) == TYPE_NORMAL)
-			return super.getItem(getCursorPosition(position));
-
-		mCursor.moveToPosition(position);
-		return null;
+		return super.getItem(getCursorPosition(position));
 	}
 
 	@Override
