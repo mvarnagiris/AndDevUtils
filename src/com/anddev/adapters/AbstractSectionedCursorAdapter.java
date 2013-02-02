@@ -26,6 +26,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 	protected final List<SectionInfo>	sectionsList;
 	protected final boolean				isExpandable;
+	protected final boolean				useFirstAsHeader;
 
 	public AbstractSectionedCursorAdapter(Context context, Cursor c)
 	{
@@ -34,9 +35,15 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 	public AbstractSectionedCursorAdapter(Context context, Cursor c, boolean isExpandable)
 	{
+		this(context, c, isExpandable, false);
+	}
+
+	public AbstractSectionedCursorAdapter(Context context, Cursor c, boolean isExpandable, boolean useFirstAsHeader)
+	{
 		super(context, c);
 		this.sectionsList = new ArrayList<SectionInfo>();
 		this.isExpandable = isExpandable;
+		this.useFirstAsHeader = useFirstAsHeader;
 		if (c != null)
 			findIndexes(c);
 		prepareIndexer(c);
@@ -64,7 +71,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 			}
 		}
 
-		return super.getCount() + sectionsList.size() - collapsedSize;
+		return super.getCount() + (useFirstAsHeader ? 0 : sectionsList.size()) - collapsedSize;
 	}
 
 	@Override
@@ -118,7 +125,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (type == TYPE_HEADER)
 		{
 			final int section = getSectionForPosition(position);
-			mCursor.moveToPosition(getCursorPosition(position) + 1);
+			mCursor.moveToPosition(getCursorPosition(position));
 			if (convertView == null)
 				convertView = newHeaderView(mContext, section, mCursor, parent);
 
@@ -140,7 +147,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 			final int section = getSectionForPosition(position);
 			final int sectionPosition = getPositionForSection(section);
 			final SectionInfo sectionInfo = sectionsList.get(section);
-			mCursor.moveToPosition(getCursorPosition(sectionPosition) + 1);
+			mCursor.moveToPosition(getCursorPosition(sectionPosition));
 			sectionInfo.isExpanded = onToggleSection(section, sectionInfo.isExpanded, mCursor);
 			notifyDataSetChanged();
 			return true;
@@ -166,7 +173,6 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 
 		final Set<String> sectionsUniqueIDsSet = new HashSet<String>();
 
-		int i = 0;
 		int size = 0;
 		String parsedSectionValue;
 		do
@@ -181,14 +187,13 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 				if (sectionListSize > 0)
 				{
 					final SectionInfo sectionInfo = sectionsList.get(sectionListSize - 1);
-					sectionInfo.size = size;
+					sectionInfo.size = size + (useFirstAsHeader ? -1 : 0);
 					size = 0;
 				}
 
 				final boolean isSectionExpanded = isSectionExpanded(sectionListSize, c);
-				sectionsList.add(new SectionInfo(parsedSectionValue, i + sectionsList.size(), isSectionExpanded));
+				sectionsList.add(new SectionInfo(parsedSectionValue, c.getPosition() + (useFirstAsHeader ? 0 : sectionsList.size()), isSectionExpanded));
 			}
-			i++;
 			size++;
 		}
 		while (c.moveToNext());
@@ -197,12 +202,13 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (sectionListSize > 0)
 		{
 			final SectionInfo sectionInfo = sectionsList.get(sectionListSize - 1);
-			sectionInfo.size = size;
+			sectionInfo.size = size + (useFirstAsHeader ? -1 : 0);
 		}
 	}
 
 	protected int getCursorPosition(int position)
 	{
+		boolean isHeader = getItemViewType(position) == TYPE_HEADER;
 		final int section = getSectionForPosition(position);
 		int collapsedRows = 0;
 		if (isExpandable)
@@ -215,7 +221,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 					collapsedRows += sectionInfo.size;
 			}
 		}
-		return position - (section + 1) + collapsedRows;
+		return position + collapsedRows - (useFirstAsHeader ? 0 : isHeader ? section : section + 1);
 	}
 
 	// Abstract methods
@@ -301,7 +307,6 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 			this.position = position;
 			this.isExpanded = isExpanded;
 			this.size = 0;
-
 		}
 	}
 }
