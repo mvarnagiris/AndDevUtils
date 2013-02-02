@@ -104,6 +104,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (getItemViewType(position) == TYPE_NORMAL)
 			return super.getItemId(getCursorPosition(position));
 
+		mCursor.moveToPosition(position);
 		return 0;
 	}
 
@@ -113,6 +114,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		if (getItemViewType(position) == TYPE_NORMAL)
 			return super.getItem(getCursorPosition(position));
 
+		mCursor.moveToPosition(position);
 		return null;
 	}
 
