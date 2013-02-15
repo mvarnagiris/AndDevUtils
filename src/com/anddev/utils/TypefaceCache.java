@@ -11,10 +11,10 @@ public class TypefaceCache
 {
 	public enum TypefaceCode
 	{
-		ROBOTO_LIGHT, ROBOTO_THIN, ROBOTO_CONDENSED
+		ROBOTO_REGULAR, ROBOTO_LIGHT, ROBOTO_THIN, ROBOTO_CONDENSED
 	};
 
-	private static final Map<String, Typeface>	typefaceMap			= new HashMap<String, Typeface>();
+	private static final Map<String, Typeface>	typefaceMap	= new HashMap<String, Typeface>();
 
 	// Public static methods
 	// --------------------------------------------------------------------------------------------------------------------------------
@@ -52,6 +52,9 @@ public class TypefaceCache
 	{
 		switch (typefaceCode)
 		{
+			case ROBOTO_REGULAR:
+				return "fonts/Roboto-Regular.ttf";
+
 			case ROBOTO_LIGHT:
 				return "fonts/Roboto-Light.ttf";
 
