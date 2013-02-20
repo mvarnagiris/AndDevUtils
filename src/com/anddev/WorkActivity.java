@@ -94,11 +94,27 @@ public abstract class WorkActivity extends SherlockFragmentActivity
 
 	protected void updateEventsToTrack()
 	{
+		WorkEvents workEvents = WorkEvents.getDefault();
+		EventToTrack oldEventToTrack;
+		for (String eventId : eventsToTrack.keySet())
+		{
+			oldEventToTrack = eventsToTrack.get(eventId);
+			if (oldEventToTrack.showProgress && workEvents.isWorking(eventId, oldEventToTrack.workingOnPending))
+				workingCount--;
+		}
+
 		eventsToTrack.clear();
 		EventToTrack[] eventsToTrackArray = getEventsToTrack();
 		if (eventsToTrackArray != null)
+		{
 			for (EventToTrack eventToTrack : eventsToTrackArray)
+			{
 				eventsToTrack.put(eventToTrack.event.getEventId(), eventToTrack);
+				if (eventToTrack.showProgress && workEvents.isWorking(eventToTrack.event.getEventId(), eventToTrack.workingOnPending))
+					workingCount++;
+			}
+		}
+		setSupportProgressBarIndeterminateVisibility(workingCount > 0);
 	}
 
 	/**
