@@ -150,6 +150,13 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 		return false;
 	}
 
+	public boolean isLastInSection(int position)
+	{
+		final int section = getSectionForPosition(position);
+		final SectionInfo sectionInfo = sectionsList.get(section);
+		return !sectionInfo.isExpanded || getPositionForSection(section) + sectionInfo.size == position;
+	}
+
 	// Private methods
 	// ------------------------------------------------------------------------------------------------------------------------------------
 
@@ -216,6 +223,23 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 			}
 		}
 		return position + collapsedRows - (useFirstAsHeader ? 0 : isHeader ? section : section + 1);
+	}
+
+	protected int getAdapterViewPosition(int cursorPosition)
+	{
+		int totalSize = 0;
+		int collapsedSize = 0;
+		int sectionsCount = 0;
+		for (SectionInfo section : sectionsList)
+		{
+			sectionsCount++;
+			totalSize += section.size;
+			collapsedSize += section.isExpanded ? 0 : section.size;
+			if (totalSize > cursorPosition)
+				break;
+		}
+
+		return cursorPosition - collapsedSize + sectionsCount;
 	}
 
 	// Abstract methods
