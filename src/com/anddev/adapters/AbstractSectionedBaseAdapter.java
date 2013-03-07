@@ -120,7 +120,7 @@ public abstract class AbstractSectionedBaseAdapter extends BaseAdapter implement
 	// Public methods
 	// --------------------------------------------------------------------------------------------------------------------------------
 
-	public void setData(List<SectionedBaseAdapterObject> objectList)
+	public void setData(List<? extends SectionedBaseAdapterObject> objectList)
 	{
 		this.objectList.clear();
 		if (objectList != null)
