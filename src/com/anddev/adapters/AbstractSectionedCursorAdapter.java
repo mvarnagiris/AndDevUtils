@@ -54,8 +54,14 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	{
 		if (newCursor != null)
 			findIndexes(newCursor);
-		prepareIndexer(newCursor);
 		return super.swapCursor(newCursor);
+	}
+	
+	@Override
+	protected void onContentChanged()
+	{
+		super.onContentChanged();
+		prepareIndexer(mCursor);
 	}
 
 	@Override
