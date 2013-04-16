@@ -247,7 +247,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 				break;
 		}
 
-		return cursorPosition - collapsedSize + sectionsCount;
+		return cursorPosition - collapsedSize + (useFirstAsHeader ? 0 : sectionsCount);
 	}
 
 	// Abstract methods
