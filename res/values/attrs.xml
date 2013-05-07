@@ -9,6 +9,7 @@
         <enum name="condensed_italic" value="4" />
         <enum name="bold_condensed" value="5" />
         <enum name="bold" value="6" />
+        <enum name="light_italic" value="7" />
     </attr>
 
     <declare-styleable name="RTextView">
