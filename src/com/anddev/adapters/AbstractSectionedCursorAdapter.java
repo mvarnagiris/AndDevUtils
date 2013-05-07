@@ -62,7 +62,7 @@ public abstract class AbstractSectionedCursorAdapter extends AbstractCursorAdapt
 	protected void onContentChanged()
 	{
 		super.onContentChanged();
-		if (mCursor.getCount() == 0)
+		if (mCursor == null || mCursor.getCount() == 0)
 			prepareIndexer(mCursor);
 	}
 
