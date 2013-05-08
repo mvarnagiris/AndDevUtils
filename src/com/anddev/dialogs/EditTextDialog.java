@@ -33,8 +33,11 @@ public class EditTextDialog extends SimpleDialog
 			edit_ET = new EditText(getActivity());
 			customView = edit_ET;
 		}
-		edit_ET.setText(text);
-		edit_ET.setSelection(text.length());
+		if (!TextUtils.isEmpty(text))
+		{
+			edit_ET.setText(text);
+			edit_ET.setSelection(text.length());
+		}
 
 		// Create dialog
 		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
